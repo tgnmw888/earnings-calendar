@@ -625,7 +625,7 @@ document.getElementById("exportWithData").addEventListener("click", () => {
     const blob = new Blob([html], {type: "text/html"});
     const a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
-    a.download = "earnings-calendar-" + new Date().toISOString().slice(0,10) + ".html";
+    a.download = "index.html";
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
