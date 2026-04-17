@@ -161,6 +161,31 @@ body{font-family:"IBM Plex Sans",sans-serif;background:var(--bg);color:var(--tex
 .state-msg{text-align:center;padding:48px 32px;color:var(--text3);font-size:13px;font-family:"IBM Plex Mono",monospace}
 .state-icon{font-size:26px;margin-bottom:10px}
 
+/* Weekly view */
+.week-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)}
+.week-cell{background:var(--surface);padding:8px;min-height:0}
+.week-grid{height:calc(100vh - 180px)}
+.week-grid.no-weekends{grid-template-columns:repeat(5,1fr)}
+.week-cell{overflow-y:auto}
+.week-cell.weekend{background:#faf9f5}
+.week-cell.today .week-day-num{background:var(--today-bg);color:var(--today-text)}
+.week-cell-head{display:flex;align-items:center;gap:6px;margin-bottom:6px;padding-bottom:5px;border-bottom:1px solid var(--border)}
+.week-day-label{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--text3)}
+.week-day-num{font-family:"IBM Plex Mono",monospace;font-size:13px;font-weight:500;color:var(--text2);width:24px;height:24px;display:flex;align-items:center;justify-content:center;border-radius:3px;flex-shrink:0}
+.week-event{display:flex;align-items:center;justify-content:space-between;font-size:11px;border-radius:3px;padding:3px 6px;margin-bottom:3px;border:1px solid transparent;line-height:1.35;cursor:pointer;transition:opacity .1s}
+.week-event:hover{opacity:.75}
+.week-event.conf{background:var(--conf-bg);color:var(--conf);border-color:var(--conf-border)}
+.week-event.unconf{background:var(--unconf-bg);color:var(--unconf);border-color:var(--unconf-border)}
+.week-event-name{font-weight:500;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.week-event-time{font-family:"IBM Plex Mono",monospace;font-size:10px;opacity:.8;white-space:nowrap;margin-left:6px;flex-shrink:0}
+.week-empty{font-size:11px;color:var(--text3);font-family:"IBM Plex Mono",monospace;padding:4px 0}
+#weekView{display:none;padding:20px 28px 32px}
+#weekView.active{display:block}
+#weekNav{display:flex;align-items:center;gap:8px;margin-bottom:14px}
+#weekNav button{background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius);padding:6px 12px;cursor:pointer;font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--text2)}
+#weekNav button:hover{background:var(--surface2)}
+#weekRangeLabel{font-family:"IBM Plex Mono",monospace;font-size:13px;font-weight:500;color:var(--text);min-width:200px;text-align:center}
+
 /* List view */
 #listView{display:none;padding:20px 28px 40px}
 #listView.active{display:block}
@@ -224,7 +249,7 @@ body{font-family:"IBM Plex Sans",sans-serif;background:var(--bg);color:var(--tex
   </div>
   <div class="data-badge">
     <div class="status-dot loaded" id="statusDot"></div>
-    <span id="statusText">FactSet · 116 entries</span>
+    <span id="statusText">FactSet · 117 entries</span>
   </div>
 </div>
 
@@ -248,21 +273,22 @@ body{font-family:"IBM Plex Sans",sans-serif;background:var(--bg);color:var(--tex
     <button data-val="all" class="active">All</button>
   </div>
   <div class="filter-group">
-    <button id="toggleWeekends" class="active">Weekends</button>
+    <button id="toggleWeekends" class="">Weekends</button>
   </div>
   <div class="filter-group">
-    <button id="viewCalBtn" class="active">📅 Calendar</button>
-    <button id="viewListBtn" class="">☰ List</button>
+    <button id="viewCalBtn" class="">📅 Month</button>
+    <button id="viewWeekBtn" class="active">📅 Week</button>
+    <button id="viewListBtn">☰ List</button>
   </div>
   <div class="controls-right">
-    <span id="lastUpdated">Restored from last session</span>
+    <span id="lastUpdated">Updated 10:56:32 AM</span>
     <button class="ctrl-btn" id="settingsBtn" onclick="openSettings()">⚙ Watchlist &amp; Data</button>
   </div>
 </div>
 
-<div class="cal-wrap" style="">
-  <div class="day-headers" style="grid-template-columns: repeat(7, 1fr);"><div class="day-header">Sun</div><div class="day-header">Mon</div><div class="day-header">Tue</div><div class="day-header">Wed</div><div class="day-header">Thu</div><div class="day-header">Fri</div><div class="day-header">Sat</div></div>
-  <div class="cal-grid" id="calGrid" style="grid-template-columns: repeat(7, 1fr);"><div class="cal-cell other-month weekend"><div class="day-num">26</div><div class="cal-cell-events"></div></div><div class="cal-cell other-month"><div class="day-num">27</div><div class="cal-cell-events"><div class="event conf"><span class="event-ticker">Verizon Communicatio…</span><span class="event-time">8:30 AM ET</span></div></div></div><div class="cal-cell other-month"><div class="day-num">28</div><div class="cal-cell-events"><div class="event conf"><span class="event-ticker">Spotify Technology S…</span><span class="event-time">8:00 AM ET</span></div><div class="event conf"><span class="event-ticker">Hilton Worldwide Hol…</span><span class="event-time">9:00 AM ET</span></div><div class="event conf"><span class="event-ticker">T-Mobile US, Inc.</span><span class="event-time">4:30 PM ET</span></div><div class="event conf"><span class="event-ticker">Robinhood Markets, I…</span><span class="event-time">5:00 PM ET</span></div></div></div><div class="cal-cell other-month"><div class="day-num">29</div><div class="cal-cell-events"><div class="event conf"><span class="event-ticker">Etsy, Inc.</span><span class="event-time">8:30 AM ET</span></div><div class="event unconf"><span class="event-ticker">adidas AG</span><span class="event-time">9:00 AM ET</span></div><div class="event conf"><span class="event-ticker">Porsche AG</span><span class="event-time">12:00 PM ET</span></div><div class="event conf"><span class="event-ticker">Alphabet, Inc.</span><span class="event-time">4:30 PM ET</span></div><div class="event conf"><span class="event-ticker">Amazon.com, Inc.</span><span class="event-time">5:30 PM ET</span></div><div class="event conf"><span class="event-ticker">Meta Platforms, Inc.</span><span class="event-time">5:30 PM ET</span></div><div class="event conf"><span class="event-ticker">Microsoft Corp.</span><span class="event-time">5:30 PM ET</span></div><div class="event conf"><span class="event-ticker">Samsung Electronics…</span><span class="event-time">9:00 PM ET</span></div></div></div><div class="cal-cell other-month"><div class="day-num">30</div><div class="cal-cell-events"><div class="event unconf"><span class="event-ticker">Datadog, Inc.</span><span class="event-time">8:00 AM ET</span></div><div class="event conf"><span class="event-ticker">Hyatt Hotels Corp.</span><span class="event-time">10:00 AM ET</span></div><div class="event conf"><span class="event-ticker">Reddit, Inc.</span><span class="event-time">4:30 PM ET</span></div><div class="event conf"><span class="event-ticker">Roblox Corp.</span><span class="event-time">4:30 PM ET</span></div><div class="event conf"><span class="event-ticker">Apple, Inc.</span><span class="event-time">5:00 PM ET</span></div><div class="event conf"><span class="event-ticker">Atlassian Corp.</span><span class="event-time">5:00 PM ET</span></div><div class="event conf"><span class="event-ticker">Rivian Automotive, I…</span><span class="event-time">5:00 PM ET</span></div><div class="event conf"><span class="event-ticker">Roku, Inc.</span><span class="event-time">5:00 PM ET</span></div></div></div><div class="cal-cell"><div class="day-num">1</div><div class="cal-cell-events"></div></div><div class="cal-cell weekend"><div class="day-num">2</div><div class="cal-cell-events"></div></div><div class="cal-cell weekend"><div class="day-num">3</div><div class="cal-cell-events"></div></div><div class="cal-cell"><div class="day-num">4</div><div class="cal-cell-events"><div class="event conf"><span class="event-ticker">Pinterest, Inc.</span><span class="event-time">4:30 PM ET</span></div><div class="event conf"><span class="event-ticker">Palantir Technologie…</span><span class="event-time">5:00 PM ET</span></div><div class="event conf"><span class="event-ticker">Grab Holdings Ltd. (…</span><span class="event-time">8:00 PM ET</span></div></div></div><div class="cal-cell"><div class="day-num">5</div><div class="cal-cell-events"><div class="event conf"><span class="event-ticker">PayPal Holdings, Inc…</span><span class="event-time">8:00 AM ET</span></div><div class="event conf"><span class="event-ticker">Procore Technologies…</span><span class="event-time">8:30 AM ET</span></div><div class="event conf"><span class="event-ticker">KKR &amp; Co., Inc.</span><span class="event-time">10:00 AM ET</span></div><div class="event conf"><span class="event-ticker">Advanced Micro Devic…</span><span class="event-time">5:00 PM ET</span></div><div class="event conf"><span class="event-ticker">Strategy, Inc.</span><span class="event-time">5:00 PM ET</span></div><div class="event conf"><span class="event-ticker">Lucid Group, Inc.</span><span class="event-time">5:30 PM ET</span></div><div class="event conf"><span class="event-ticker">Ferrari NV</span><span class="event-time"></span></div><div class="event conf"><span class="event-ticker">Shopify, Inc.</span><span class="event-time"></span></div></div></div><div class="cal-cell"><div class="day-num">6</div><div class="cal-cell-events"><div class="event conf"><span class="event-ticker">Uber Technologies, I…</span><span class="event-time">8:00 AM ET</span></div><div class="event conf"><span class="event-ticker">Apollo Global Manage…</span><span class="event-time">8:30 AM ET</span></div><div class="event conf"><span class="event-ticker">Maplebear, Inc.</span><span class="event-time">8:30 AM ET</span></div><div class="event conf"><span class="event-ticker">The Walt Disney Co.</span><span class="event-time">8:30 AM ET</span></div><div class="event conf"><span class="event-ticker">DoorDash, Inc.</span><span class="event-time">4:30 PM ET</span></div><div class="event unconf"><span class="event-ticker">HubSpot, Inc.</span><span class="event-time">4:30 PM ET</span></div><div class="event conf"><span class="event-ticker">Applovin Corp.</span><span class="event-time">5:00 PM ET</span></div><div class="event conf"><span class="event-ticker">Arm Holdings Plc</span><span class="event-time">5:00 PM ET</span></div><div class="event unconf"><span class="event-ticker">Lyft, Inc.</span><span class="event-time">5:00 PM ET</span></div></div></div><div class="cal-cell"><div class="day-num">7</div><div class="cal-cell-events"><div class="event unconf"><span class="event-ticker">Warner Bros. Discove…</span><span class="event-time">8:00 AM ET</span></div><div class="event conf"><span class="event-ticker">The Carlyle Group In…</span><span class="event-time">8:30 AM ET</span></div><div class="event conf"><span class="event-ticker">Unity Software, Inc.</span><span class="event-time">8:30 AM ET</span></div><div class="event conf"><span class="event-ticker">Airbnb, Inc.</span><span class="event-time">5:00 PM ET</span></div><div class="event conf"><span class="event-ticker">Cloudflare, Inc.</span><span class="event-time">5:00 PM ET</span></div><div class="event conf"><span class="event-ticker">Block, Inc.</span><span class="event-time">5:00 PM ET</span></div><div class="event unconf"><span class="event-ticker">MercadoLibre, Inc.</span><span class="event-time">5:00 PM ET</span></div><div class="event conf"><span class="event-ticker">Coinbase Global, Inc…</span><span class="event-time">5:30 PM ET</span></div></div></div><div class="cal-cell"><div class="day-num">8</div><div class="cal-cell-events"></div></div><div class="cal-cell weekend"><div class="day-num">9</div><div class="cal-cell-events"></div></div><div class="cal-cell weekend"><div class="day-num">10</div><div class="cal-cell-events"></div></div><div class="cal-cell"><div class="day-num">11</div><div class="cal-cell-events"><div class="event conf"><span class="event-ticker">Circle Internet Grou…</span><span class="event-time">8:00 AM ET</span></div></div></div><div class="cal-cell"><div class="day-num">12</div><div class="cal-cell-events"><div class="event conf"><span class="event-ticker">Tencent Music Entert…</span><span class="event-time">7:00 AM ET</span></div><div class="event unconf"><span class="event-ticker">Fox Corp.</span><span class="event-time">8:30 AM ET</span></div><div class="event unconf"><span class="event-ticker">Origin Materials, In…</span><span class="event-time">5:00 PM ET</span></div><div class="event unconf"><span class="event-ticker">Coupang, Inc.</span><span class="event-time">5:30 PM ET</span></div></div></div><div class="cal-cell"><div class="day-num">13</div><div class="cal-cell-events"><div class="event unconf"><span class="event-ticker">ASICS Corp.</span><span class="event-time">2:00 AM ET</span></div><div class="event conf"><span class="event-ticker">SoftBank Group Corp.</span><span class="event-time">3:30 AM ET</span></div><div class="event unconf"><span class="event-ticker">Tencent Holdings Ltd…</span><span class="event-time">8:00 AM ET</span></div><div class="event unconf"><span class="event-ticker">The Trade Desk, Inc.</span><span class="event-time">5:00 PM ET</span></div></div></div><div class="cal-cell"><div class="day-num">14</div><div class="cal-cell-events"><div class="event unconf"><span class="event-ticker">Alibaba Group Holdin…</span><span class="event-time">7:30 AM ET</span></div><div class="event unconf"><span class="event-ticker">Walmart, Inc.</span><span class="event-time">8:00 AM ET</span></div></div></div><div class="cal-cell"><div class="day-num">15</div><div class="cal-cell-events"><div class="event unconf"><span class="event-ticker">VF Corp.</span><span class="event-time">8:00 AM ET</span></div></div></div><div class="cal-cell weekend"><div class="day-num">16</div><div class="cal-cell-events"></div></div><div class="cal-cell weekend"><div class="day-num">17</div><div class="cal-cell-events"></div></div><div class="cal-cell"><div class="day-num">18</div><div class="cal-cell-events"></div></div><div class="cal-cell"><div class="day-num">19</div><div class="cal-cell-events"><div class="event unconf"><span class="event-ticker">iQIYI, Inc.</span><span class="event-time">6:30 AM ET</span></div><div class="event unconf"><span class="event-ticker">JD.com, Inc.</span><span class="event-time">7:00 AM ET</span></div><div class="event unconf"><span class="event-ticker">Baidu, Inc.</span><span class="event-time">7:30 AM ET</span></div><div class="event unconf"><span class="event-ticker">Sea Ltd. (Singapore)</span><span class="event-time">7:30 AM ET</span></div><div class="event unconf"><span class="event-ticker">On Holding AG</span><span class="event-time">8:00 AM ET</span></div></div></div><div class="cal-cell"><div class="day-num">20</div><div class="cal-cell-events"><div class="event unconf"><span class="event-ticker">Target Corp.</span><span class="event-time">8:00 AM ET</span></div><div class="event unconf"><span class="event-ticker">NVIDIA Corp.</span><span class="event-time">5:00 PM ET</span></div></div></div><div class="cal-cell"><div class="day-num">21</div><div class="cal-cell-events"><div class="event unconf"><span class="event-ticker">Deckers Outdoor Corp…</span><span class="event-time">4:30 PM ET</span></div><div class="event unconf"><span class="event-ticker">Workday, Inc.</span><span class="event-time">4:30 PM ET</span></div></div></div><div class="cal-cell"><div class="day-num">22</div><div class="cal-cell-events"><div class="event conf"><span class="event-ticker">Compagnie Financière…</span><span class="event-time">3:30 AM ET</span></div></div></div><div class="cal-cell weekend"><div class="day-num">23</div><div class="cal-cell-events"></div></div><div class="cal-cell weekend"><div class="day-num">24</div><div class="cal-cell-events"></div></div><div class="cal-cell"><div class="day-num">25</div><div class="cal-cell-events"><div class="event unconf"><span class="event-ticker">Kuaishou Technology</span><span class="event-time">7:00 AM ET</span></div><div class="event unconf"><span class="event-ticker">Zoom Communications,…</span><span class="event-time">5:00 PM ET</span></div></div></div><div class="cal-cell"><div class="day-num">26</div><div class="cal-cell-events"><div class="event unconf"><span class="event-ticker">Li Auto, Inc.</span><span class="event-time">8:00 AM ET</span></div><div class="event unconf"><span class="event-ticker">Palo Alto Networks,…</span><span class="event-time">4:30 PM ET</span></div></div></div><div class="cal-cell"><div class="day-num">27</div><div class="cal-cell-events"><div class="event unconf"><span class="event-ticker">PDD Holdings, Inc.</span><span class="event-time">7:30 AM ET</span></div><div class="event unconf"><span class="event-ticker">XPeng, Inc.</span><span class="event-time">8:00 AM ET</span></div><div class="event unconf"><span class="event-ticker">Dick's Sporting Good…</span><span class="event-time">10:00 AM ET</span></div><div class="event unconf"><span class="event-ticker">Snowflake, Inc.</span><span class="event-time">5:00 PM ET</span></div></div></div><div class="cal-cell"><div class="day-num">28</div><div class="cal-cell-events"><div class="event unconf"><span class="event-ticker">lululemon athletica,…</span><span class="event-time">4:30 PM ET</span></div><div class="event unconf"><span class="event-ticker">Zscaler, Inc.</span><span class="event-time">4:30 PM ET</span></div><div class="event unconf"><span class="event-ticker">CrowdStrike Holdings…</span><span class="event-time">5:00 PM ET</span></div></div></div><div class="cal-cell"><div class="day-num">29</div><div class="cal-cell-events"></div></div><div class="cal-cell weekend"><div class="day-num">30</div><div class="cal-cell-events"></div></div><div class="cal-cell weekend"><div class="day-num">31</div><div class="cal-cell-events"></div></div><div class="cal-cell other-month"><div class="day-num">1</div><div class="cal-cell-events"></div></div><div class="cal-cell other-month"><div class="day-num">2</div><div class="cal-cell-events"></div></div><div class="cal-cell other-month"><div class="day-num">3</div><div class="cal-cell-events"><div class="event unconf"><span class="event-ticker">Industria de Diseño…</span><span class="event-time">4:00 AM ET</span></div><div class="event unconf"><span class="event-ticker">Chewy, Inc.</span><span class="event-time">8:00 AM ET</span></div><div class="event unconf"><span class="event-ticker">Salesforce, Inc.</span><span class="event-time">5:00 PM ET</span></div></div></div><div class="cal-cell other-month"><div class="day-num">4</div><div class="cal-cell-events"><div class="event unconf"><span class="event-ticker">NIO, Inc.</span><span class="event-time">8:00 AM ET</span></div><div class="event unconf"><span class="event-ticker">Broadcom Inc.</span><span class="event-time">5:00 PM ET</span></div></div></div><div class="cal-cell other-month"><div class="day-num">5</div><div class="cal-cell-events"></div></div><div class="cal-cell other-month weekend"><div class="day-num">6</div><div class="cal-cell-events"></div></div></div>
+<div class="cal-wrap" style="display: none;">
+  <div class="day-headers" style="grid-template-columns: repeat(5, 1fr);"><div class="day-header">Mon</div><div class="day-header">Tue</div><div class="day-header">Wed</div><div class="day-header">Thu</div><div class="day-header">Fri</div></div>
+  <div class="cal-grid" id="calGrid" style="grid-template-columns: repeat(5, 1fr);"><div class="cal-cell other-month"><div class="day-num">27</div><div class="cal-cell-events"><div class="event conf"><span class="event-ticker">Verizon Communications, Inc.</span><span class="event-time">8:30 AM ET</span></div></div></div><div class="cal-cell other-month"><div class="day-num">28</div><div class="cal-cell-events"><div class="event conf"><span class="event-ticker">Spotify Technology SA</span><span class="event-time">8:00 AM ET</span></div><div class="event conf"><span class="event-ticker">Hilton Worldwide Holdings, Inc.</span><span class="event-time">9:00 AM ET</span></div><div class="event conf"><span class="event-ticker">T-Mobile US, Inc.</span><span class="event-time">4:30 PM ET</span></div><div class="event conf"><span class="event-ticker">Robinhood Markets, Inc.</span><span class="event-time">5:00 PM ET</span></div></div></div><div class="cal-cell other-month"><div class="day-num">29</div><div class="cal-cell-events"><div class="event conf"><span class="event-ticker">Etsy, Inc.</span><span class="event-time">8:30 AM ET</span></div><div class="event unconf"><span class="event-ticker">adidas AG</span><span class="event-time">9:00 AM ET</span></div><div class="event conf"><span class="event-ticker">Porsche AG</span><span class="event-time">12:00 PM ET</span></div><div class="event conf"><span class="event-ticker">Alphabet, Inc.</span><span class="event-time">4:30 PM ET</span></div><div class="event conf"><span class="event-ticker">Amazon.com, Inc.</span><span class="event-time">5:30 PM ET</span></div><div class="event conf"><span class="event-ticker">Meta Platforms, Inc.</span><span class="event-time">5:30 PM ET</span></div><div class="event conf"><span class="event-ticker">Microsoft Corp.</span><span class="event-time">5:30 PM ET</span></div><div class="event conf"><span class="event-ticker">Samsung Electronics Co., Ltd.</span><span class="event-time">9:00 PM ET</span></div></div></div><div class="cal-cell other-month"><div class="day-num">30</div><div class="cal-cell-events"><div class="event unconf"><span class="event-ticker">Datadog, Inc.</span><span class="event-time">8:00 AM ET</span></div><div class="event conf"><span class="event-ticker">Hyatt Hotels Corp.</span><span class="event-time">10:00 AM ET</span></div><div class="event conf"><span class="event-ticker">Reddit, Inc.</span><span class="event-time">4:30 PM ET</span></div><div class="event conf"><span class="event-ticker">Roblox Corp.</span><span class="event-time">4:30 PM ET</span></div><div class="event conf"><span class="event-ticker">Apple, Inc.</span><span class="event-time">5:00 PM ET</span></div><div class="event conf"><span class="event-ticker">Atlassian Corp.</span><span class="event-time">5:00 PM ET</span></div><div class="event conf"><span class="event-ticker">Rivian Automotive, Inc.</span><span class="event-time">5:00 PM ET</span></div><div class="event conf"><span class="event-ticker">Roku, Inc.</span><span class="event-time">5:00 PM ET</span></div></div></div><div class="cal-cell"><div class="day-num">1</div><div class="cal-cell-events"></div></div><div class="cal-cell"><div class="day-num">4</div><div class="cal-cell-events"><div class="event conf"><span class="event-ticker">Pinterest, Inc.</span><span class="event-time">4:30 PM ET</span></div><div class="event conf"><span class="event-ticker">Paramount Skydance Corp.</span><span class="event-time">4:45 PM ET</span></div><div class="event conf"><span class="event-ticker">Palantir Technologies, Inc.</span><span class="event-time">5:00 PM ET</span></div><div class="event conf"><span class="event-ticker">Grab Holdings Ltd. (Singapore)</span><span class="event-time">8:00 PM ET</span></div></div></div><div class="cal-cell"><div class="day-num">5</div><div class="cal-cell-events"><div class="event conf"><span class="event-ticker">PayPal Holdings, Inc.</span><span class="event-time">8:00 AM ET</span></div><div class="event conf"><span class="event-ticker">Procore Technologies, Inc.</span><span class="event-time">8:30 AM ET</span></div><div class="event conf"><span class="event-ticker">KKR &amp; Co., Inc.</span><span class="event-time">10:00 AM ET</span></div><div class="event conf"><span class="event-ticker">Advanced Micro Devices, Inc.</span><span class="event-time">5:00 PM ET</span></div><div class="event conf"><span class="event-ticker">Strategy, Inc.</span><span class="event-time">5:00 PM ET</span></div><div class="event conf"><span class="event-ticker">Lucid Group, Inc.</span><span class="event-time">5:30 PM ET</span></div><div class="event conf"><span class="event-ticker">Ferrari NV</span><span class="event-time"></span></div><div class="event conf"><span class="event-ticker">Shopify, Inc.</span><span class="event-time"></span></div></div></div><div class="cal-cell"><div class="day-num">6</div><div class="cal-cell-events"><div class="event conf"><span class="event-ticker">Uber Technologies, Inc.</span><span class="event-time">8:00 AM ET</span></div><div class="event conf"><span class="event-ticker">Apollo Global Management, Inc.</span><span class="event-time">8:30 AM ET</span></div><div class="event conf"><span class="event-ticker">Maplebear, Inc.</span><span class="event-time">8:30 AM ET</span></div><div class="event conf"><span class="event-ticker">The Walt Disney Co.</span><span class="event-time">8:30 AM ET</span></div><div class="event conf"><span class="event-ticker">DoorDash, Inc.</span><span class="event-time">4:30 PM ET</span></div><div class="event unconf"><span class="event-ticker">HubSpot, Inc.</span><span class="event-time">4:30 PM ET</span></div><div class="event conf"><span class="event-ticker">Applovin Corp.</span><span class="event-time">5:00 PM ET</span></div><div class="event conf"><span class="event-ticker">Arm Holdings Plc</span><span class="event-time">5:00 PM ET</span></div><div class="event unconf"><span class="event-ticker">Lyft, Inc.</span><span class="event-time">5:00 PM ET</span></div></div></div><div class="cal-cell"><div class="day-num">7</div><div class="cal-cell-events"><div class="event unconf"><span class="event-ticker">Warner Bros. Discovery, Inc.</span><span class="event-time">8:00 AM ET</span></div><div class="event conf"><span class="event-ticker">The Carlyle Group Inc.</span><span class="event-time">8:30 AM ET</span></div><div class="event conf"><span class="event-ticker">Unity Software, Inc.</span><span class="event-time">8:30 AM ET</span></div><div class="event conf"><span class="event-ticker">Airbnb, Inc.</span><span class="event-time">5:00 PM ET</span></div><div class="event conf"><span class="event-ticker">Cloudflare, Inc.</span><span class="event-time">5:00 PM ET</span></div><div class="event conf"><span class="event-ticker">Block, Inc.</span><span class="event-time">5:00 PM ET</span></div><div class="event unconf"><span class="event-ticker">MercadoLibre, Inc.</span><span class="event-time">5:00 PM ET</span></div><div class="event conf"><span class="event-ticker">Coinbase Global, Inc.</span><span class="event-time">5:30 PM ET</span></div></div></div><div class="cal-cell"><div class="day-num">8</div><div class="cal-cell-events"></div></div><div class="cal-cell"><div class="day-num">11</div><div class="cal-cell-events"><div class="event conf"><span class="event-ticker">Circle Internet Group, Inc.</span><span class="event-time">8:00 AM ET</span></div></div></div><div class="cal-cell"><div class="day-num">12</div><div class="cal-cell-events"><div class="event conf"><span class="event-ticker">Tencent Music Entertainment Group</span><span class="event-time">7:00 AM ET</span></div><div class="event unconf"><span class="event-ticker">Fox Corp.</span><span class="event-time">8:30 AM ET</span></div><div class="event unconf"><span class="event-ticker">Origin Materials, Inc.</span><span class="event-time">5:00 PM ET</span></div><div class="event unconf"><span class="event-ticker">Coupang, Inc.</span><span class="event-time">5:30 PM ET</span></div></div></div><div class="cal-cell"><div class="day-num">13</div><div class="cal-cell-events"><div class="event unconf"><span class="event-ticker">ASICS Corp.</span><span class="event-time">2:00 AM ET</span></div><div class="event conf"><span class="event-ticker">SoftBank Group Corp.</span><span class="event-time">3:30 AM ET</span></div><div class="event unconf"><span class="event-ticker">Tencent Holdings Ltd.</span><span class="event-time">8:00 AM ET</span></div><div class="event unconf"><span class="event-ticker">The Trade Desk, Inc.</span><span class="event-time">5:00 PM ET</span></div></div></div><div class="cal-cell"><div class="day-num">14</div><div class="cal-cell-events"><div class="event unconf"><span class="event-ticker">Alibaba Group Holding Ltd.</span><span class="event-time">7:30 AM ET</span></div><div class="event unconf"><span class="event-ticker">Walmart, Inc.</span><span class="event-time">8:00 AM ET</span></div></div></div><div class="cal-cell"><div class="day-num">15</div><div class="cal-cell-events"><div class="event unconf"><span class="event-ticker">VF Corp.</span><span class="event-time">8:00 AM ET</span></div></div></div><div class="cal-cell"><div class="day-num">18</div><div class="cal-cell-events"></div></div><div class="cal-cell"><div class="day-num">19</div><div class="cal-cell-events"><div class="event unconf"><span class="event-ticker">iQIYI, Inc.</span><span class="event-time">6:30 AM ET</span></div><div class="event unconf"><span class="event-ticker">JD.com, Inc.</span><span class="event-time">7:00 AM ET</span></div><div class="event unconf"><span class="event-ticker">Baidu, Inc.</span><span class="event-time">7:30 AM ET</span></div><div class="event unconf"><span class="event-ticker">Sea Ltd. (Singapore)</span><span class="event-time">7:30 AM ET</span></div><div class="event unconf"><span class="event-ticker">On Holding AG</span><span class="event-time">8:00 AM ET</span></div></div></div><div class="cal-cell"><div class="day-num">20</div><div class="cal-cell-events"><div class="event unconf"><span class="event-ticker">Target Corp.</span><span class="event-time">8:00 AM ET</span></div><div class="event unconf"><span class="event-ticker">NVIDIA Corp.</span><span class="event-time">5:00 PM ET</span></div></div></div><div class="cal-cell"><div class="day-num">21</div><div class="cal-cell-events"><div class="event unconf"><span class="event-ticker">Deckers Outdoor Corp.</span><span class="event-time">4:30 PM ET</span></div><div class="event unconf"><span class="event-ticker">Workday, Inc.</span><span class="event-time">4:30 PM ET</span></div></div></div><div class="cal-cell"><div class="day-num">22</div><div class="cal-cell-events"><div class="event conf"><span class="event-ticker">Compagnie Financière Richemont SA</span><span class="event-time">3:30 AM ET</span></div></div></div><div class="cal-cell"><div class="day-num">25</div><div class="cal-cell-events"><div class="event unconf"><span class="event-ticker">Kuaishou Technology</span><span class="event-time">7:00 AM ET</span></div><div class="event unconf"><span class="event-ticker">Zoom Communications, Inc.</span><span class="event-time">5:00 PM ET</span></div></div></div><div class="cal-cell"><div class="day-num">26</div><div class="cal-cell-events"><div class="event unconf"><span class="event-ticker">Li Auto, Inc.</span><span class="event-time">8:00 AM ET</span></div><div class="event unconf"><span class="event-ticker">Palo Alto Networks, Inc.</span><span class="event-time">4:30 PM ET</span></div></div></div><div class="cal-cell"><div class="day-num">27</div><div class="cal-cell-events"><div class="event unconf"><span class="event-ticker">PDD Holdings, Inc.</span><span class="event-time">7:30 AM ET</span></div><div class="event unconf"><span class="event-ticker">XPeng, Inc.</span><span class="event-time">8:00 AM ET</span></div><div class="event unconf"><span class="event-ticker">Dick's Sporting Goods, Inc.</span><span class="event-time">10:00 AM ET</span></div><div class="event unconf"><span class="event-ticker">Snowflake, Inc.</span><span class="event-time">5:00 PM ET</span></div></div></div><div class="cal-cell"><div class="day-num">28</div><div class="cal-cell-events"><div class="event unconf"><span class="event-ticker">lululemon athletica, Inc.</span><span class="event-time">4:30 PM ET</span></div><div class="event unconf"><span class="event-ticker">Zscaler, Inc.</span><span class="event-time">4:30 PM ET</span></div><div class="event unconf"><span class="event-ticker">CrowdStrike Holdings, Inc.</span><span class="event-time">5:00 PM ET</span></div></div></div><div class="cal-cell"><div class="day-num">29</div><div class="cal-cell-events"></div></div><div class="cal-cell other-month"><div class="day-num">1</div><div class="cal-cell-events"></div></div><div class="cal-cell other-month"><div class="day-num">2</div><div class="cal-cell-events"></div></div><div class="cal-cell other-month"><div class="day-num">3</div><div class="cal-cell-events"><div class="event unconf"><span class="event-ticker">Industria de Diseño Textil SA</span><span class="event-time">4:00 AM ET</span></div><div class="event unconf"><span class="event-ticker">Chewy, Inc.</span><span class="event-time">8:00 AM ET</span></div><div class="event unconf"><span class="event-ticker">Salesforce, Inc.</span><span class="event-time">5:00 PM ET</span></div></div></div><div class="cal-cell other-month"><div class="day-num">4</div><div class="cal-cell-events"><div class="event unconf"><span class="event-ticker">NIO, Inc.</span><span class="event-time">8:00 AM ET</span></div><div class="event unconf"><span class="event-ticker">Broadcom Inc.</span><span class="event-time">5:00 PM ET</span></div></div></div><div class="cal-cell other-month"><div class="day-num">5</div><div class="cal-cell-events"></div></div></div>
   <div class="legend">
     <div class="legend-item"><div class="legend-swatch conf"></div>Confirmed</div>
     <div class="legend-item"><div class="legend-swatch unconf"></div>Unconfirmed</div>
@@ -270,494 +296,31 @@ body{font-family:"IBM Plex Sans",sans-serif;background:var(--bg);color:var(--tex
   </div>
 </div>
 
-<div id="listView" class=""><div class="list-date-group"><div class="list-date-heading"><span class="ldh-day">Thursday</span><span class="ldh-label">April 16, 2026</span><span class="ldh-label" style="margin-left:auto">3 reports</span></div><div class="list-row conf">
-        <div class="list-row-name">Taiwan Semiconductor Manufacturing Co., Ltd.</div>
-        <div class="list-row-time">2:00 AM ET</div>
-        <div class="list-row-timing bmo">BMO</div>
-        <div class="list-row-badge conf">Confirmed</div></div><div class="list-row conf">
-        <div class="list-row-name">The Charles Schwab Corp.</div>
-        <div class="list-row-time">8:30 AM ET</div>
-        <div class="list-row-timing bmo">BMO</div>
-        <div class="list-row-badge conf">Confirmed</div></div><div class="list-row conf">
-        <div class="list-row-name">Netflix, Inc.</div>
-        <div class="list-row-time">4:45 PM ET</div>
-        <div class="list-row-timing amc">AMC</div>
-        <div class="list-row-badge conf">Confirmed</div></div></div><div class="list-date-group"><div class="list-date-heading"><span class="ldh-day">Friday</span><span class="ldh-label">April 17, 2026</span><span class="ldh-label" style="margin-left:auto">1 report</span></div><div class="list-row conf">
-        <div class="list-row-name">Polestar Automotive Holding UK Plc</div>
-        <div class="list-row-time">8:00 AM ET</div>
-        <div class="list-row-timing bmo">BMO</div>
-        <div class="list-row-badge conf">Confirmed</div></div></div><div class="list-date-group"><div class="list-date-heading"><span class="ldh-day">Wednesday</span><span class="ldh-label">April 22, 2026</span><span class="ldh-label" style="margin-left:auto">4 reports</span></div><div class="list-row conf">
-        <div class="list-row-name">AT&amp;T, Inc.</div>
-        <div class="list-row-time">8:30 AM ET</div>
-        <div class="list-row-timing bmo">BMO</div>
-        <div class="list-row-badge conf">Confirmed</div></div><div class="list-row conf">
-        <div class="list-row-name">International Business Machines Corp.</div>
-        <div class="list-row-time">5:00 PM ET</div>
-        <div class="list-row-timing amc">AMC</div>
-        <div class="list-row-badge conf">Confirmed</div></div><div class="list-row conf">
-        <div class="list-row-name">ServiceNow, Inc.</div>
-        <div class="list-row-time">5:00 PM ET</div>
-        <div class="list-row-timing amc">AMC</div>
-        <div class="list-row-badge conf">Confirmed</div></div><div class="list-row conf">
-        <div class="list-row-name">Tesla, Inc.</div>
-        <div class="list-row-time">5:30 PM ET</div>
-        <div class="list-row-timing amc">AMC</div>
-        <div class="list-row-badge conf">Confirmed</div></div></div><div class="list-date-group"><div class="list-date-heading"><span class="ldh-day">Thursday</span><span class="ldh-label">April 23, 2026</span><span class="ldh-label" style="margin-left:auto">4 reports</span></div><div class="list-row conf">
-        <div class="list-row-name">Comcast Corp.</div>
-        <div class="list-row-time">8:30 AM ET</div>
-        <div class="list-row-timing bmo">BMO</div>
-        <div class="list-row-badge conf">Confirmed</div></div><div class="list-row conf">
-        <div class="list-row-name">Blackstone, Inc.</div>
-        <div class="list-row-time">9:00 AM ET</div>
-        <div class="list-row-timing bmo">BMO</div>
-        <div class="list-row-badge conf">Confirmed</div></div><div class="list-row conf">
-        <div class="list-row-name">Snap, Inc.</div>
-        <div class="list-row-time">10:00 AM ET</div>
-        <div class="list-row-timing unk">TBC</div>
-        <div class="list-row-badge conf">Confirmed</div></div><div class="list-row conf">
-        <div class="list-row-name">Intel Corp.</div>
-        <div class="list-row-time">5:00 PM ET</div>
-        <div class="list-row-timing amc">AMC</div>
-        <div class="list-row-badge conf">Confirmed</div></div></div><div class="list-date-group"><div class="list-date-heading"><span class="ldh-day">Monday</span><span class="ldh-label">April 27, 2026</span><span class="ldh-label" style="margin-left:auto">1 report</span></div><div class="list-row conf">
-        <div class="list-row-name">Verizon Communications, Inc.</div>
-        <div class="list-row-time">8:30 AM ET</div>
-        <div class="list-row-timing bmo">BMO</div>
-        <div class="list-row-badge conf">Confirmed</div></div></div><div class="list-date-group"><div class="list-date-heading"><span class="ldh-day">Tuesday</span><span class="ldh-label">April 28, 2026</span><span class="ldh-label" style="margin-left:auto">4 reports</span></div><div class="list-row conf">
-        <div class="list-row-name">Spotify Technology SA</div>
-        <div class="list-row-time">8:00 AM ET</div>
-        <div class="list-row-timing bmo">BMO</div>
-        <div class="list-row-badge conf">Confirmed</div></div><div class="list-row conf">
-        <div class="list-row-name">Hilton Worldwide Holdings, Inc.</div>
-        <div class="list-row-time">9:00 AM ET</div>
-        <div class="list-row-timing bmo">BMO</div>
-        <div class="list-row-badge conf">Confirmed</div></div><div class="list-row conf">
-        <div class="list-row-name">T-Mobile US, Inc.</div>
-        <div class="list-row-time">4:30 PM ET</div>
-        <div class="list-row-timing amc">AMC</div>
-        <div class="list-row-badge conf">Confirmed</div></div><div class="list-row conf">
-        <div class="list-row-name">Robinhood Markets, Inc.</div>
-        <div class="list-row-time">5:00 PM ET</div>
-        <div class="list-row-timing amc">AMC</div>
-        <div class="list-row-badge conf">Confirmed</div></div></div><div class="list-date-group"><div class="list-date-heading"><span class="ldh-day">Wednesday</span><span class="ldh-label">April 29, 2026</span><span class="ldh-label" style="margin-left:auto">8 reports</span></div><div class="list-row conf">
-        <div class="list-row-name">Etsy, Inc.</div>
-        <div class="list-row-time">8:30 AM ET</div>
-        <div class="list-row-timing bmo">BMO</div>
-        <div class="list-row-badge conf">Confirmed</div></div><div class="list-row unconf">
-        <div class="list-row-name">adidas AG</div>
-        <div class="list-row-time">9:00 AM ET</div>
-        <div class="list-row-timing bmo">BMO</div>
-        <div class="list-row-badge unconf">Unconfirmed</div></div><div class="list-row conf">
-        <div class="list-row-name">Porsche AG</div>
-        <div class="list-row-time">12:00 PM ET</div>
-        <div class="list-row-timing unk">TBC</div>
-        <div class="list-row-badge conf">Confirmed</div></div><div class="list-row conf">
-        <div class="list-row-name">Alphabet, Inc.</div>
-        <div class="list-row-time">4:30 PM ET</div>
-        <div class="list-row-timing amc">AMC</div>
-        <div class="list-row-badge conf">Confirmed</div></div><div class="list-row conf">
-        <div class="list-row-name">Amazon.com, Inc.</div>
-        <div class="list-row-time">5:30 PM ET</div>
-        <div class="list-row-timing amc">AMC</div>
-        <div class="list-row-badge conf">Confirmed</div></div><div class="list-row conf">
-        <div class="list-row-name">Meta Platforms, Inc.</div>
-        <div class="list-row-time">5:30 PM ET</div>
-        <div class="list-row-timing amc">AMC</div>
-        <div class="list-row-badge conf">Confirmed</div></div><div class="list-row conf">
-        <div class="list-row-name">Microsoft Corp.</div>
-        <div class="list-row-time">5:30 PM ET</div>
-        <div class="list-row-timing amc">AMC</div>
-        <div class="list-row-badge conf">Confirmed</div></div><div class="list-row conf">
-        <div class="list-row-name">Samsung Electronics Co., Ltd.</div>
-        <div class="list-row-time">9:00 PM ET</div>
-        <div class="list-row-timing amc">AMC</div>
-        <div class="list-row-badge conf">Confirmed</div></div></div><div class="list-date-group"><div class="list-date-heading"><span class="ldh-day">Thursday</span><span class="ldh-label">April 30, 2026</span><span class="ldh-label" style="margin-left:auto">8 reports</span></div><div class="list-row unconf">
-        <div class="list-row-name">Datadog, Inc.</div>
-        <div class="list-row-time">8:00 AM ET</div>
-        <div class="list-row-timing bmo">BMO</div>
-        <div class="list-row-badge unconf">Unconfirmed</div></div><div class="list-row conf">
-        <div class="list-row-name">Hyatt Hotels Corp.</div>
-        <div class="list-row-time">10:00 AM ET</div>
-        <div class="list-row-timing unk">TBC</div>
-        <div class="list-row-badge conf">Confirmed</div></div><div class="list-row conf">
-        <div class="list-row-name">Reddit, Inc.</div>
-        <div class="list-row-time">4:30 PM ET</div>
-        <div class="list-row-timing amc">AMC</div>
-        <div class="list-row-badge conf">Confirmed</div></div><div class="list-row conf">
-        <div class="list-row-name">Roblox Corp.</div>
-        <div class="list-row-time">4:30 PM ET</div>
-        <div class="list-row-timing amc">AMC</div>
-        <div class="list-row-badge conf">Confirmed</div></div><div class="list-row conf">
-        <div class="list-row-name">Apple, Inc.</div>
-        <div class="list-row-time">5:00 PM ET</div>
-        <div class="list-row-timing amc">AMC</div>
-        <div class="list-row-badge conf">Confirmed</div></div><div class="list-row conf">
-        <div class="list-row-name">Atlassian Corp.</div>
-        <div class="list-row-time">5:00 PM ET</div>
-        <div class="list-row-timing amc">AMC</div>
-        <div class="list-row-badge conf">Confirmed</div></div><div class="list-row conf">
-        <div class="list-row-name">Rivian Automotive, Inc.</div>
-        <div class="list-row-time">5:00 PM ET</div>
-        <div class="list-row-timing amc">AMC</div>
-        <div class="list-row-badge conf">Confirmed</div></div><div class="list-row conf">
-        <div class="list-row-name">Roku, Inc.</div>
-        <div class="list-row-time">5:00 PM ET</div>
-        <div class="list-row-timing amc">AMC</div>
-        <div class="list-row-badge conf">Confirmed</div></div></div><div class="list-date-group"><div class="list-date-heading"><span class="ldh-day">Monday</span><span class="ldh-label">May 4, 2026</span><span class="ldh-label" style="margin-left:auto">3 reports</span></div><div class="list-row conf">
-        <div class="list-row-name">Pinterest, Inc.</div>
-        <div class="list-row-time">4:30 PM ET</div>
-        <div class="list-row-timing amc">AMC</div>
-        <div class="list-row-badge conf">Confirmed</div></div><div class="list-row conf">
-        <div class="list-row-name">Palantir Technologies, Inc.</div>
-        <div class="list-row-time">5:00 PM ET</div>
-        <div class="list-row-timing amc">AMC</div>
-        <div class="list-row-badge conf">Confirmed</div></div><div class="list-row conf">
-        <div class="list-row-name">Grab Holdings Ltd. (Singapore)</div>
-        <div class="list-row-time">8:00 PM ET</div>
-        <div class="list-row-timing amc">AMC</div>
-        <div class="list-row-badge conf">Confirmed</div></div></div><div class="list-date-group"><div class="list-date-heading"><span class="ldh-day">Tuesday</span><span class="ldh-label">May 5, 2026</span><span class="ldh-label" style="margin-left:auto">8 reports</span></div><div class="list-row conf">
-        <div class="list-row-name">PayPal Holdings, Inc.</div>
-        <div class="list-row-time">8:00 AM ET</div>
-        <div class="list-row-timing bmo">BMO</div>
-        <div class="list-row-badge conf">Confirmed</div></div><div class="list-row conf">
-        <div class="list-row-name">Procore Technologies, Inc.</div>
-        <div class="list-row-time">8:30 AM ET</div>
-        <div class="list-row-timing bmo">BMO</div>
-        <div class="list-row-badge conf">Confirmed</div></div><div class="list-row conf">
-        <div class="list-row-name">KKR &amp; Co., Inc.</div>
-        <div class="list-row-time">10:00 AM ET</div>
-        <div class="list-row-timing unk">TBC</div>
-        <div class="list-row-badge conf">Confirmed</div></div><div class="list-row conf">
-        <div class="list-row-name">Advanced Micro Devices, Inc.</div>
-        <div class="list-row-time">5:00 PM ET</div>
-        <div class="list-row-timing amc">AMC</div>
-        <div class="list-row-badge conf">Confirmed</div></div><div class="list-row conf">
-        <div class="list-row-name">Strategy, Inc.</div>
-        <div class="list-row-time">5:00 PM ET</div>
-        <div class="list-row-timing amc">AMC</div>
-        <div class="list-row-badge conf">Confirmed</div></div><div class="list-row conf">
-        <div class="list-row-name">Lucid Group, Inc.</div>
-        <div class="list-row-time">5:30 PM ET</div>
-        <div class="list-row-timing amc">AMC</div>
-        <div class="list-row-badge conf">Confirmed</div></div><div class="list-row conf">
-        <div class="list-row-name">Ferrari NV</div>
-        <div class="list-row-time">—</div>
-        <div class="list-row-timing unk">TBC</div>
-        <div class="list-row-badge conf">Confirmed</div></div><div class="list-row conf">
-        <div class="list-row-name">Shopify, Inc.</div>
-        <div class="list-row-time">—</div>
-        <div class="list-row-timing unk">TBC</div>
-        <div class="list-row-badge conf">Confirmed</div></div></div><div class="list-date-group"><div class="list-date-heading"><span class="ldh-day">Wednesday</span><span class="ldh-label">May 6, 2026</span><span class="ldh-label" style="margin-left:auto">9 reports</span></div><div class="list-row conf">
-        <div class="list-row-name">Uber Technologies, Inc.</div>
-        <div class="list-row-time">8:00 AM ET</div>
-        <div class="list-row-timing bmo">BMO</div>
-        <div class="list-row-badge conf">Confirmed</div></div><div class="list-row conf">
-        <div class="list-row-name">Apollo Global Management, Inc.</div>
-        <div class="list-row-time">8:30 AM ET</div>
-        <div class="list-row-timing bmo">BMO</div>
-        <div class="list-row-badge conf">Confirmed</div></div><div class="list-row conf">
-        <div class="list-row-name">Maplebear, Inc.</div>
-        <div class="list-row-time">8:30 AM ET</div>
-        <div class="list-row-timing bmo">BMO</div>
-        <div class="list-row-badge conf">Confirmed</div></div><div class="list-row conf">
-        <div class="list-row-name">The Walt Disney Co.</div>
-        <div class="list-row-time">8:30 AM ET</div>
-        <div class="list-row-timing bmo">BMO</div>
-        <div class="list-row-badge conf">Confirmed</div></div><div class="list-row conf">
-        <div class="list-row-name">DoorDash, Inc.</div>
-        <div class="list-row-time">4:30 PM ET</div>
-        <div class="list-row-timing amc">AMC</div>
-        <div class="list-row-badge conf">Confirmed</div></div><div class="list-row unconf">
-        <div class="list-row-name">HubSpot, Inc.</div>
-        <div class="list-row-time">4:30 PM ET</div>
-        <div class="list-row-timing amc">AMC</div>
-        <div class="list-row-badge unconf">Unconfirmed</div></div><div class="list-row conf">
-        <div class="list-row-name">Applovin Corp.</div>
-        <div class="list-row-time">5:00 PM ET</div>
-        <div class="list-row-timing amc">AMC</div>
-        <div class="list-row-badge conf">Confirmed</div></div><div class="list-row conf">
-        <div class="list-row-name">Arm Holdings Plc</div>
-        <div class="list-row-time">5:00 PM ET</div>
-        <div class="list-row-timing amc">AMC</div>
-        <div class="list-row-badge conf">Confirmed</div></div><div class="list-row unconf">
-        <div class="list-row-name">Lyft, Inc.</div>
-        <div class="list-row-time">5:00 PM ET</div>
-        <div class="list-row-timing amc">AMC</div>
-        <div class="list-row-badge unconf">Unconfirmed</div></div></div><div class="list-date-group"><div class="list-date-heading"><span class="ldh-day">Thursday</span><span class="ldh-label">May 7, 2026</span><span class="ldh-label" style="margin-left:auto">8 reports</span></div><div class="list-row unconf">
-        <div class="list-row-name">Warner Bros. Discovery, Inc.</div>
-        <div class="list-row-time">8:00 AM ET</div>
-        <div class="list-row-timing bmo">BMO</div>
-        <div class="list-row-badge unconf">Unconfirmed</div></div><div class="list-row conf">
-        <div class="list-row-name">The Carlyle Group Inc.</div>
-        <div class="list-row-time">8:30 AM ET</div>
-        <div class="list-row-timing bmo">BMO</div>
-        <div class="list-row-badge conf">Confirmed</div></div><div class="list-row conf">
-        <div class="list-row-name">Unity Software, Inc.</div>
-        <div class="list-row-time">8:30 AM ET</div>
-        <div class="list-row-timing bmo">BMO</div>
-        <div class="list-row-badge conf">Confirmed</div></div><div class="list-row conf">
-        <div class="list-row-name">Airbnb, Inc.</div>
-        <div class="list-row-time">5:00 PM ET</div>
-        <div class="list-row-timing amc">AMC</div>
-        <div class="list-row-badge conf">Confirmed</div></div><div class="list-row conf">
-        <div class="list-row-name">Cloudflare, Inc.</div>
-        <div class="list-row-time">5:00 PM ET</div>
-        <div class="list-row-timing amc">AMC</div>
-        <div class="list-row-badge conf">Confirmed</div></div><div class="list-row conf">
-        <div class="list-row-name">Block, Inc.</div>
-        <div class="list-row-time">5:00 PM ET</div>
-        <div class="list-row-timing amc">AMC</div>
-        <div class="list-row-badge conf">Confirmed</div></div><div class="list-row unconf">
-        <div class="list-row-name">MercadoLibre, Inc.</div>
-        <div class="list-row-time">5:00 PM ET</div>
-        <div class="list-row-timing amc">AMC</div>
-        <div class="list-row-badge unconf">Unconfirmed</div></div><div class="list-row conf">
-        <div class="list-row-name">Coinbase Global, Inc.</div>
-        <div class="list-row-time">5:30 PM ET</div>
-        <div class="list-row-timing amc">AMC</div>
-        <div class="list-row-badge conf">Confirmed</div></div></div><div class="list-date-group"><div class="list-date-heading"><span class="ldh-day">Monday</span><span class="ldh-label">May 11, 2026</span><span class="ldh-label" style="margin-left:auto">1 report</span></div><div class="list-row conf">
-        <div class="list-row-name">Circle Internet Group, Inc.</div>
-        <div class="list-row-time">8:00 AM ET</div>
-        <div class="list-row-timing bmo">BMO</div>
-        <div class="list-row-badge conf">Confirmed</div></div></div><div class="list-date-group"><div class="list-date-heading"><span class="ldh-day">Tuesday</span><span class="ldh-label">May 12, 2026</span><span class="ldh-label" style="margin-left:auto">4 reports</span></div><div class="list-row conf">
-        <div class="list-row-name">Tencent Music Entertainment Group</div>
-        <div class="list-row-time">7:00 AM ET</div>
-        <div class="list-row-timing bmo">BMO</div>
-        <div class="list-row-badge conf">Confirmed</div></div><div class="list-row unconf">
-        <div class="list-row-name">Fox Corp.</div>
-        <div class="list-row-time">8:30 AM ET</div>
-        <div class="list-row-timing bmo">BMO</div>
-        <div class="list-row-badge unconf">Unconfirmed</div></div><div class="list-row unconf">
-        <div class="list-row-name">Origin Materials, Inc.</div>
-        <div class="list-row-time">5:00 PM ET</div>
-        <div class="list-row-timing amc">AMC</div>
-        <div class="list-row-badge unconf">Unconfirmed</div></div><div class="list-row unconf">
-        <div class="list-row-name">Coupang, Inc.</div>
-        <div class="list-row-time">5:30 PM ET</div>
-        <div class="list-row-timing amc">AMC</div>
-        <div class="list-row-badge unconf">Unconfirmed</div></div></div><div class="list-date-group"><div class="list-date-heading"><span class="ldh-day">Wednesday</span><span class="ldh-label">May 13, 2026</span><span class="ldh-label" style="margin-left:auto">4 reports</span></div><div class="list-row unconf">
-        <div class="list-row-name">ASICS Corp.</div>
-        <div class="list-row-time">2:00 AM ET</div>
-        <div class="list-row-timing bmo">BMO</div>
-        <div class="list-row-badge unconf">Unconfirmed</div></div><div class="list-row conf">
-        <div class="list-row-name">SoftBank Group Corp.</div>
-        <div class="list-row-time">3:30 AM ET</div>
-        <div class="list-row-timing bmo">BMO</div>
-        <div class="list-row-badge conf">Confirmed</div></div><div class="list-row unconf">
-        <div class="list-row-name">Tencent Holdings Ltd.</div>
-        <div class="list-row-time">8:00 AM ET</div>
-        <div class="list-row-timing bmo">BMO</div>
-        <div class="list-row-badge unconf">Unconfirmed</div></div><div class="list-row unconf">
-        <div class="list-row-name">The Trade Desk, Inc.</div>
-        <div class="list-row-time">5:00 PM ET</div>
-        <div class="list-row-timing amc">AMC</div>
-        <div class="list-row-badge unconf">Unconfirmed</div></div></div><div class="list-date-group"><div class="list-date-heading"><span class="ldh-day">Thursday</span><span class="ldh-label">May 14, 2026</span><span class="ldh-label" style="margin-left:auto">2 reports</span></div><div class="list-row unconf">
-        <div class="list-row-name">Alibaba Group Holding Ltd.</div>
-        <div class="list-row-time">7:30 AM ET</div>
-        <div class="list-row-timing bmo">BMO</div>
-        <div class="list-row-badge unconf">Unconfirmed</div></div><div class="list-row unconf">
-        <div class="list-row-name">Walmart, Inc.</div>
-        <div class="list-row-time">8:00 AM ET</div>
-        <div class="list-row-timing bmo">BMO</div>
-        <div class="list-row-badge unconf">Unconfirmed</div></div></div><div class="list-date-group"><div class="list-date-heading"><span class="ldh-day">Friday</span><span class="ldh-label">May 15, 2026</span><span class="ldh-label" style="margin-left:auto">1 report</span></div><div class="list-row unconf">
-        <div class="list-row-name">VF Corp.</div>
-        <div class="list-row-time">8:00 AM ET</div>
-        <div class="list-row-timing bmo">BMO</div>
-        <div class="list-row-badge unconf">Unconfirmed</div></div></div><div class="list-date-group"><div class="list-date-heading"><span class="ldh-day">Tuesday</span><span class="ldh-label">May 19, 2026</span><span class="ldh-label" style="margin-left:auto">5 reports</span></div><div class="list-row unconf">
-        <div class="list-row-name">iQIYI, Inc.</div>
-        <div class="list-row-time">6:30 AM ET</div>
-        <div class="list-row-timing bmo">BMO</div>
-        <div class="list-row-badge unconf">Unconfirmed</div></div><div class="list-row unconf">
-        <div class="list-row-name">JD.com, Inc.</div>
-        <div class="list-row-time">7:00 AM ET</div>
-        <div class="list-row-timing bmo">BMO</div>
-        <div class="list-row-badge unconf">Unconfirmed</div></div><div class="list-row unconf">
-        <div class="list-row-name">Baidu, Inc.</div>
-        <div class="list-row-time">7:30 AM ET</div>
-        <div class="list-row-timing bmo">BMO</div>
-        <div class="list-row-badge unconf">Unconfirmed</div></div><div class="list-row unconf">
-        <div class="list-row-name">Sea Ltd. (Singapore)</div>
-        <div class="list-row-time">7:30 AM ET</div>
-        <div class="list-row-timing bmo">BMO</div>
-        <div class="list-row-badge unconf">Unconfirmed</div></div><div class="list-row unconf">
-        <div class="list-row-name">On Holding AG</div>
-        <div class="list-row-time">8:00 AM ET</div>
-        <div class="list-row-timing bmo">BMO</div>
-        <div class="list-row-badge unconf">Unconfirmed</div></div></div><div class="list-date-group"><div class="list-date-heading"><span class="ldh-day">Wednesday</span><span class="ldh-label">May 20, 2026</span><span class="ldh-label" style="margin-left:auto">2 reports</span></div><div class="list-row unconf">
-        <div class="list-row-name">Target Corp.</div>
-        <div class="list-row-time">8:00 AM ET</div>
-        <div class="list-row-timing bmo">BMO</div>
-        <div class="list-row-badge unconf">Unconfirmed</div></div><div class="list-row unconf">
-        <div class="list-row-name">NVIDIA Corp.</div>
-        <div class="list-row-time">5:00 PM ET</div>
-        <div class="list-row-timing amc">AMC</div>
-        <div class="list-row-badge unconf">Unconfirmed</div></div></div><div class="list-date-group"><div class="list-date-heading"><span class="ldh-day">Thursday</span><span class="ldh-label">May 21, 2026</span><span class="ldh-label" style="margin-left:auto">2 reports</span></div><div class="list-row unconf">
-        <div class="list-row-name">Deckers Outdoor Corp.</div>
-        <div class="list-row-time">4:30 PM ET</div>
-        <div class="list-row-timing amc">AMC</div>
-        <div class="list-row-badge unconf">Unconfirmed</div></div><div class="list-row unconf">
-        <div class="list-row-name">Workday, Inc.</div>
-        <div class="list-row-time">4:30 PM ET</div>
-        <div class="list-row-timing amc">AMC</div>
-        <div class="list-row-badge unconf">Unconfirmed</div></div></div><div class="list-date-group"><div class="list-date-heading"><span class="ldh-day">Friday</span><span class="ldh-label">May 22, 2026</span><span class="ldh-label" style="margin-left:auto">1 report</span></div><div class="list-row conf">
-        <div class="list-row-name">Compagnie Financière Richemont SA</div>
-        <div class="list-row-time">3:30 AM ET</div>
-        <div class="list-row-timing bmo">BMO</div>
-        <div class="list-row-badge conf">Confirmed</div></div></div><div class="list-date-group"><div class="list-date-heading"><span class="ldh-day">Monday</span><span class="ldh-label">May 25, 2026</span><span class="ldh-label" style="margin-left:auto">2 reports</span></div><div class="list-row unconf">
-        <div class="list-row-name">Kuaishou Technology</div>
-        <div class="list-row-time">7:00 AM ET</div>
-        <div class="list-row-timing bmo">BMO</div>
-        <div class="list-row-badge unconf">Unconfirmed</div></div><div class="list-row unconf">
-        <div class="list-row-name">Zoom Communications, Inc.</div>
-        <div class="list-row-time">5:00 PM ET</div>
-        <div class="list-row-timing amc">AMC</div>
-        <div class="list-row-badge unconf">Unconfirmed</div></div></div><div class="list-date-group"><div class="list-date-heading"><span class="ldh-day">Tuesday</span><span class="ldh-label">May 26, 2026</span><span class="ldh-label" style="margin-left:auto">2 reports</span></div><div class="list-row unconf">
-        <div class="list-row-name">Li Auto, Inc.</div>
-        <div class="list-row-time">8:00 AM ET</div>
-        <div class="list-row-timing bmo">BMO</div>
-        <div class="list-row-badge unconf">Unconfirmed</div></div><div class="list-row unconf">
-        <div class="list-row-name">Palo Alto Networks, Inc.</div>
-        <div class="list-row-time">4:30 PM ET</div>
-        <div class="list-row-timing amc">AMC</div>
-        <div class="list-row-badge unconf">Unconfirmed</div></div></div><div class="list-date-group"><div class="list-date-heading"><span class="ldh-day">Wednesday</span><span class="ldh-label">May 27, 2026</span><span class="ldh-label" style="margin-left:auto">4 reports</span></div><div class="list-row unconf">
-        <div class="list-row-name">PDD Holdings, Inc.</div>
-        <div class="list-row-time">7:30 AM ET</div>
-        <div class="list-row-timing bmo">BMO</div>
-        <div class="list-row-badge unconf">Unconfirmed</div></div><div class="list-row unconf">
-        <div class="list-row-name">XPeng, Inc.</div>
-        <div class="list-row-time">8:00 AM ET</div>
-        <div class="list-row-timing bmo">BMO</div>
-        <div class="list-row-badge unconf">Unconfirmed</div></div><div class="list-row unconf">
-        <div class="list-row-name">Dick's Sporting Goods, Inc.</div>
-        <div class="list-row-time">10:00 AM ET</div>
-        <div class="list-row-timing unk">TBC</div>
-        <div class="list-row-badge unconf">Unconfirmed</div></div><div class="list-row unconf">
-        <div class="list-row-name">Snowflake, Inc.</div>
-        <div class="list-row-time">5:00 PM ET</div>
-        <div class="list-row-timing amc">AMC</div>
-        <div class="list-row-badge unconf">Unconfirmed</div></div></div><div class="list-date-group"><div class="list-date-heading"><span class="ldh-day">Thursday</span><span class="ldh-label">May 28, 2026</span><span class="ldh-label" style="margin-left:auto">3 reports</span></div><div class="list-row unconf">
-        <div class="list-row-name">lululemon athletica, Inc.</div>
-        <div class="list-row-time">4:30 PM ET</div>
-        <div class="list-row-timing amc">AMC</div>
-        <div class="list-row-badge unconf">Unconfirmed</div></div><div class="list-row unconf">
-        <div class="list-row-name">Zscaler, Inc.</div>
-        <div class="list-row-time">4:30 PM ET</div>
-        <div class="list-row-timing amc">AMC</div>
-        <div class="list-row-badge unconf">Unconfirmed</div></div><div class="list-row unconf">
-        <div class="list-row-name">CrowdStrike Holdings, Inc.</div>
-        <div class="list-row-time">5:00 PM ET</div>
-        <div class="list-row-timing amc">AMC</div>
-        <div class="list-row-badge unconf">Unconfirmed</div></div></div><div class="list-date-group"><div class="list-date-heading"><span class="ldh-day">Wednesday</span><span class="ldh-label">June 3, 2026</span><span class="ldh-label" style="margin-left:auto">3 reports</span></div><div class="list-row unconf">
-        <div class="list-row-name">Industria de Diseño Textil SA</div>
-        <div class="list-row-time">4:00 AM ET</div>
-        <div class="list-row-timing bmo">BMO</div>
-        <div class="list-row-badge unconf">Unconfirmed</div></div><div class="list-row unconf">
-        <div class="list-row-name">Chewy, Inc.</div>
-        <div class="list-row-time">8:00 AM ET</div>
-        <div class="list-row-timing bmo">BMO</div>
-        <div class="list-row-badge unconf">Unconfirmed</div></div><div class="list-row unconf">
-        <div class="list-row-name">Salesforce, Inc.</div>
-        <div class="list-row-time">5:00 PM ET</div>
-        <div class="list-row-timing amc">AMC</div>
-        <div class="list-row-badge unconf">Unconfirmed</div></div></div><div class="list-date-group"><div class="list-date-heading"><span class="ldh-day">Thursday</span><span class="ldh-label">June 4, 2026</span><span class="ldh-label" style="margin-left:auto">2 reports</span></div><div class="list-row unconf">
-        <div class="list-row-name">NIO, Inc.</div>
-        <div class="list-row-time">8:00 AM ET</div>
-        <div class="list-row-timing bmo">BMO</div>
-        <div class="list-row-badge unconf">Unconfirmed</div></div><div class="list-row unconf">
-        <div class="list-row-name">Broadcom Inc.</div>
-        <div class="list-row-time">5:00 PM ET</div>
-        <div class="list-row-timing amc">AMC</div>
-        <div class="list-row-badge unconf">Unconfirmed</div></div></div><div class="list-date-group"><div class="list-date-heading"><span class="ldh-day">Thursday</span><span class="ldh-label">June 11, 2026</span><span class="ldh-label" style="margin-left:auto">1 report</span></div><div class="list-row unconf">
-        <div class="list-row-name">Adobe, Inc.</div>
-        <div class="list-row-time">5:00 PM ET</div>
-        <div class="list-row-timing amc">AMC</div>
-        <div class="list-row-badge unconf">Unconfirmed</div></div></div><div class="list-date-group"><div class="list-date-heading"><span class="ldh-day">Tuesday</span><span class="ldh-label">June 16, 2026</span><span class="ldh-label" style="margin-left:auto">1 report</span></div><div class="list-row unconf">
-        <div class="list-row-name">Oracle Corp.</div>
-        <div class="list-row-time">5:00 PM ET</div>
-        <div class="list-row-timing amc">AMC</div>
-        <div class="list-row-badge unconf">Unconfirmed</div></div></div><div class="list-date-group"><div class="list-date-heading"><span class="ldh-day">Thursday</span><span class="ldh-label">June 18, 2026</span><span class="ldh-label" style="margin-left:auto">1 report</span></div><div class="list-row unconf">
-        <div class="list-row-name">Figma, Inc.</div>
-        <div class="list-row-time">5:00 PM ET</div>
-        <div class="list-row-timing amc">AMC</div>
-        <div class="list-row-badge unconf">Unconfirmed</div></div></div><div class="list-date-group"><div class="list-date-heading"><span class="ldh-day">Thursday</span><span class="ldh-label">June 25, 2026</span><span class="ldh-label" style="margin-left:auto">2 reports</span></div><div class="list-row unconf">
-        <div class="list-row-name">H&amp;M Hennes &amp; Mauritz AB</div>
-        <div class="list-row-time">4:00 AM ET</div>
-        <div class="list-row-timing bmo">BMO</div>
-        <div class="list-row-badge unconf">Unconfirmed</div></div><div class="list-row unconf">
-        <div class="list-row-name">NIKE, Inc.</div>
-        <div class="list-row-time">5:00 PM ET</div>
-        <div class="list-row-timing amc">AMC</div>
-        <div class="list-row-badge unconf">Unconfirmed</div></div></div><div class="list-date-group"><div class="list-date-heading"><span class="ldh-day">Thursday</span><span class="ldh-label">July 9, 2026</span><span class="ldh-label" style="margin-left:auto">1 report</span></div><div class="list-row unconf">
-        <div class="list-row-name">Fast Retailing Co., Ltd.</div>
-        <div class="list-row-time">—</div>
-        <div class="list-row-timing unk">TBC</div>
-        <div class="list-row-badge unconf">Unconfirmed</div></div></div><div class="list-date-group"><div class="list-date-heading"><span class="ldh-day">Tuesday</span><span class="ldh-label">July 14, 2026</span><span class="ldh-label" style="margin-left:auto">2 reports</span></div><div class="list-row conf">
-        <div class="list-row-name">JPMorgan Chase &amp; Co.</div>
-        <div class="list-row-time">8:30 AM ET</div>
-        <div class="list-row-timing bmo">BMO</div>
-        <div class="list-row-badge conf">Confirmed</div></div><div class="list-row conf">
-        <div class="list-row-name">The Goldman Sachs Group, Inc.</div>
-        <div class="list-row-time">9:30 AM ET</div>
-        <div class="list-row-timing unk">TBC</div>
-        <div class="list-row-badge conf">Confirmed</div></div></div><div class="list-date-group"><div class="list-date-heading"><span class="ldh-day">Wednesday</span><span class="ldh-label">July 15, 2026</span><span class="ldh-label" style="margin-left:auto">2 reports</span></div><div class="list-row conf">
-        <div class="list-row-name">Morgan Stanley</div>
-        <div class="list-row-time">8:30 AM ET</div>
-        <div class="list-row-timing bmo">BMO</div>
-        <div class="list-row-badge conf">Confirmed</div></div><div class="list-row unconf">
-        <div class="list-row-name">ASML Holding NV</div>
-        <div class="list-row-time">9:00 AM ET</div>
-        <div class="list-row-timing bmo">BMO</div>
-        <div class="list-row-badge unconf">Unconfirmed</div></div></div><div class="list-date-group"><div class="list-date-heading"><span class="ldh-day">Wednesday</span><span class="ldh-label">July 22, 2026</span><span class="ldh-label" style="margin-left:auto">1 report</span></div><div class="list-row unconf">
-        <div class="list-row-name">Moncler SpA</div>
-        <div class="list-row-time">12:00 PM ET</div>
-        <div class="list-row-timing unk">TBC</div>
-        <div class="list-row-badge unconf">Unconfirmed</div></div></div><div class="list-date-group"><div class="list-date-heading"><span class="ldh-day">Tuesday</span><span class="ldh-label">July 28, 2026</span><span class="ldh-label" style="margin-left:auto">1 report</span></div><div class="list-row unconf">
-        <div class="list-row-name">LVMH Moët Hennessy Louis Vuitton SE</div>
-        <div class="list-row-time">12:00 PM ET</div>
-        <div class="list-row-timing unk">TBC</div>
-        <div class="list-row-badge unconf">Unconfirmed</div></div></div><div class="list-date-group"><div class="list-date-heading"><span class="ldh-day">Wednesday</span><span class="ldh-label">July 29, 2026</span><span class="ldh-label" style="margin-left:auto">2 reports</span></div><div class="list-row unconf">
-        <div class="list-row-name">Kering SA</div>
-        <div class="list-row-time">2:00 AM ET</div>
-        <div class="list-row-timing bmo">BMO</div>
-        <div class="list-row-badge unconf">Unconfirmed</div></div><div class="list-row unconf">
-        <div class="list-row-name">Hermes International SCA</div>
-        <div class="list-row-time">—</div>
-        <div class="list-row-timing unk">TBC</div>
-        <div class="list-row-badge unconf">Unconfirmed</div></div></div><div class="list-date-group"><div class="list-date-heading"><span class="ldh-day">Thursday</span><span class="ldh-label">July 30, 2026</span><span class="ldh-label" style="margin-left:auto">1 report</span></div><div class="list-row conf">
-        <div class="list-row-name">Stellantis NV</div>
-        <div class="list-row-time">—</div>
-        <div class="list-row-timing unk">TBC</div>
-        <div class="list-row-badge conf">Confirmed</div></div></div><div class="list-date-group"><div class="list-date-heading"><span class="ldh-day">Thursday</span><span class="ldh-label">August 27, 2026</span><span class="ldh-label" style="margin-left:auto">1 report</span></div><div class="list-row unconf">
-        <div class="list-row-name">Brunello Cucinelli SpA</div>
-        <div class="list-row-time">—</div>
-        <div class="list-row-timing unk">TBC</div>
-        <div class="list-row-badge unconf">Unconfirmed</div></div></div><div class="list-date-group"><div class="list-date-heading"><span class="ldh-day">Wednesday</span><span class="ldh-label">December 23, 2026</span><span class="ldh-label" style="margin-left:auto">1 report</span></div><div class="list-row unconf">
-        <div class="list-row-name">Gloo Holdings, Inc.</div>
-        <div class="list-row-time">5:00 PM ET</div>
-        <div class="list-row-timing amc">AMC</div>
-        <div class="list-row-badge unconf">Unconfirmed</div></div></div></div>
-<div class="upcoming-wrap" style="">
+<div id="weekView" class="active"><div id="weekNav"><button id="weekPrevBtn">← Prev</button><div id="weekRangeLabel">Apr 13 – Apr 17, 2026</div><button id="weekNextBtn">Next →</button><button id="weekTodayBtn" style="margin-left:4px;font-size:11px">Today</button></div><div class="week-grid no-weekends" id="weekGrid"><div class="week-cell"><div class="week-cell-head"><div class="week-day-num">13</div><div class="week-day-label">Mon</div></div><div class="week-empty">—</div></div><div class="week-cell"><div class="week-cell-head"><div class="week-day-num">14</div><div class="week-day-label">Tue</div></div><div class="week-empty">—</div></div><div class="week-cell"><div class="week-cell-head"><div class="week-day-num">15</div><div class="week-day-label">Wed</div></div><div class="week-empty">—</div></div><div class="week-cell"><div class="week-cell-head"><div class="week-day-num">16</div><div class="week-day-label">Thu</div></div><div class="week-event unconf"><span class="week-event-name">Taiwan Semiconductor Manufacturing Co., Ltd.</span><span class="week-event-time">2:00 AM ET</span></div><div class="week-event unconf"><span class="week-event-name">The Charles Schwab Corp.</span><span class="week-event-time">8:30 AM ET</span></div><div class="week-event unconf"><span class="week-event-name">Netflix, Inc.</span><span class="week-event-time">4:45 PM ET</span></div></div><div class="week-cell today"><div class="week-cell-head"><div class="week-day-num">17</div><div class="week-day-label">Fri</div></div><div class="week-event conf"><span class="week-event-name">Polestar Automotive Holding UK Plc</span><span class="week-event-time">8:00 AM ET</span></div></div></div></div>
+<div id="listView"></div>
+<div class="upcoming-wrap" style="display: none;">
   <div class="section-header">Upcoming — next 30 days</div>
-  <div id="upcomingGrid" class="upcoming-grid"><div class="upcoming-card"><div class="uc-ticker">Taiwan Semiconductor…</div><div class="uc-name">Taiwan Semiconductor Manufacturing Co., Ltd.</div><div class="uc-date">Thu, Apr 16</div><div class="uc-calltime">2:00 AM ET ✓</div><div class="uc-tag bmo">BMO</div></div><div class="upcoming-card"><div class="uc-ticker">The Charles Schwab C…</div><div class="uc-name">The Charles Schwab Corp.</div><div class="uc-date">Thu, Apr 16</div><div class="uc-calltime">8:30 AM ET ✓</div><div class="uc-tag bmo">BMO</div></div><div class="upcoming-card"><div class="uc-ticker">Netflix, Inc.</div><div class="uc-name">Netflix, Inc.</div><div class="uc-date">Thu, Apr 16</div><div class="uc-calltime">4:45 PM ET ✓</div><div class="uc-tag amc">AMC</div></div><div class="upcoming-card"><div class="uc-ticker">Polestar Automotive…</div><div class="uc-name">Polestar Automotive Holding UK Plc</div><div class="uc-date">Fri, Apr 17</div><div class="uc-calltime">8:00 AM ET ✓</div><div class="uc-tag bmo">BMO</div></div><div class="upcoming-card"><div class="uc-ticker">AT&amp;T, Inc.</div><div class="uc-name">AT&amp;T, Inc.</div><div class="uc-date">Wed, Apr 22</div><div class="uc-calltime">8:30 AM ET ✓</div><div class="uc-tag bmo">BMO</div></div><div class="upcoming-card"><div class="uc-ticker">International Busine…</div><div class="uc-name">International Business Machines Corp.</div><div class="uc-date">Wed, Apr 22</div><div class="uc-calltime">5:00 PM ET ✓</div><div class="uc-tag amc">AMC</div></div><div class="upcoming-card"><div class="uc-ticker">ServiceNow, Inc.</div><div class="uc-name">ServiceNow, Inc.</div><div class="uc-date">Wed, Apr 22</div><div class="uc-calltime">5:00 PM ET ✓</div><div class="uc-tag amc">AMC</div></div><div class="upcoming-card"><div class="uc-ticker">Tesla, Inc.</div><div class="uc-name">Tesla, Inc.</div><div class="uc-date">Wed, Apr 22</div><div class="uc-calltime">5:30 PM ET ✓</div><div class="uc-tag amc">AMC</div></div><div class="upcoming-card"><div class="uc-ticker">Comcast Corp.</div><div class="uc-name">Comcast Corp.</div><div class="uc-date">Thu, Apr 23</div><div class="uc-calltime">8:30 AM ET ✓</div><div class="uc-tag bmo">BMO</div></div><div class="upcoming-card"><div class="uc-ticker">Blackstone, Inc.</div><div class="uc-name">Blackstone, Inc.</div><div class="uc-date">Thu, Apr 23</div><div class="uc-calltime">9:00 AM ET ✓</div><div class="uc-tag bmo">BMO</div></div><div class="upcoming-card"><div class="uc-ticker">Snap, Inc.</div><div class="uc-name">Snap, Inc.</div><div class="uc-date">Thu, Apr 23</div><div class="uc-calltime">10:00 AM ET ✓</div><div class="uc-tag unk">TBC</div></div><div class="upcoming-card"><div class="uc-ticker">Intel Corp.</div><div class="uc-name">Intel Corp.</div><div class="uc-date">Thu, Apr 23</div><div class="uc-calltime">5:00 PM ET ✓</div><div class="uc-tag amc">AMC</div></div><div class="upcoming-card"><div class="uc-ticker">Verizon Communicatio…</div><div class="uc-name">Verizon Communications, Inc.</div><div class="uc-date">Mon, Apr 27</div><div class="uc-calltime">8:30 AM ET ✓</div><div class="uc-tag bmo">BMO</div></div><div class="upcoming-card"><div class="uc-ticker">Spotify Technology S…</div><div class="uc-name">Spotify Technology SA</div><div class="uc-date">Tue, Apr 28</div><div class="uc-calltime">8:00 AM ET ✓</div><div class="uc-tag bmo">BMO</div></div><div class="upcoming-card"><div class="uc-ticker">Hilton Worldwide Hol…</div><div class="uc-name">Hilton Worldwide Holdings, Inc.</div><div class="uc-date">Tue, Apr 28</div><div class="uc-calltime">9:00 AM ET ✓</div><div class="uc-tag bmo">BMO</div></div><div class="upcoming-card"><div class="uc-ticker">T-Mobile US, Inc.</div><div class="uc-name">T-Mobile US, Inc.</div><div class="uc-date">Tue, Apr 28</div><div class="uc-calltime">4:30 PM ET ✓</div><div class="uc-tag amc">AMC</div></div><div class="upcoming-card"><div class="uc-ticker">Robinhood Markets, I…</div><div class="uc-name">Robinhood Markets, Inc.</div><div class="uc-date">Tue, Apr 28</div><div class="uc-calltime">5:00 PM ET ✓</div><div class="uc-tag amc">AMC</div></div><div class="upcoming-card"><div class="uc-ticker">Etsy, Inc.</div><div class="uc-name">Etsy, Inc.</div><div class="uc-date">Wed, Apr 29</div><div class="uc-calltime">8:30 AM ET ✓</div><div class="uc-tag bmo">BMO</div></div><div class="upcoming-card"><div class="uc-ticker">adidas AG</div><div class="uc-name">adidas AG</div><div class="uc-date">Wed, Apr 29</div><div class="uc-calltime">9:00 AM ET</div><div class="uc-tag bmo">BMO</div></div><div class="upcoming-card"><div class="uc-ticker">Porsche AG</div><div class="uc-name">Porsche AG</div><div class="uc-date">Wed, Apr 29</div><div class="uc-calltime">12:00 PM ET ✓</div><div class="uc-tag unk">TBC</div></div><div class="upcoming-card"><div class="uc-ticker">Alphabet, Inc.</div><div class="uc-name">Alphabet, Inc.</div><div class="uc-date">Wed, Apr 29</div><div class="uc-calltime">4:30 PM ET ✓</div><div class="uc-tag amc">AMC</div></div><div class="upcoming-card"><div class="uc-ticker">Amazon.com, Inc.</div><div class="uc-name">Amazon.com, Inc.</div><div class="uc-date">Wed, Apr 29</div><div class="uc-calltime">5:30 PM ET ✓</div><div class="uc-tag amc">AMC</div></div><div class="upcoming-card"><div class="uc-ticker">Meta Platforms, Inc.</div><div class="uc-name">Meta Platforms, Inc.</div><div class="uc-date">Wed, Apr 29</div><div class="uc-calltime">5:30 PM ET ✓</div><div class="uc-tag amc">AMC</div></div><div class="upcoming-card"><div class="uc-ticker">Microsoft Corp.</div><div class="uc-name">Microsoft Corp.</div><div class="uc-date">Wed, Apr 29</div><div class="uc-calltime">5:30 PM ET ✓</div><div class="uc-tag amc">AMC</div></div><div class="upcoming-card"><div class="uc-ticker">Samsung Electronics…</div><div class="uc-name">Samsung Electronics Co., Ltd.</div><div class="uc-date">Wed, Apr 29</div><div class="uc-calltime">9:00 PM ET ✓</div><div class="uc-tag amc">AMC</div></div><div class="upcoming-card"><div class="uc-ticker">Datadog, Inc.</div><div class="uc-name">Datadog, Inc.</div><div class="uc-date">Thu, Apr 30</div><div class="uc-calltime">8:00 AM ET</div><div class="uc-tag bmo">BMO</div></div><div class="upcoming-card"><div class="uc-ticker">Hyatt Hotels Corp.</div><div class="uc-name">Hyatt Hotels Corp.</div><div class="uc-date">Thu, Apr 30</div><div class="uc-calltime">10:00 AM ET ✓</div><div class="uc-tag unk">TBC</div></div><div class="upcoming-card"><div class="uc-ticker">Reddit, Inc.</div><div class="uc-name">Reddit, Inc.</div><div class="uc-date">Thu, Apr 30</div><div class="uc-calltime">4:30 PM ET ✓</div><div class="uc-tag amc">AMC</div></div><div class="upcoming-card"><div class="uc-ticker">Roblox Corp.</div><div class="uc-name">Roblox Corp.</div><div class="uc-date">Thu, Apr 30</div><div class="uc-calltime">4:30 PM ET ✓</div><div class="uc-tag amc">AMC</div></div><div class="upcoming-card"><div class="uc-ticker">Apple, Inc.</div><div class="uc-name">Apple, Inc.</div><div class="uc-date">Thu, Apr 30</div><div class="uc-calltime">5:00 PM ET ✓</div><div class="uc-tag amc">AMC</div></div><div class="upcoming-card"><div class="uc-ticker">Atlassian Corp.</div><div class="uc-name">Atlassian Corp.</div><div class="uc-date">Thu, Apr 30</div><div class="uc-calltime">5:00 PM ET ✓</div><div class="uc-tag amc">AMC</div></div><div class="upcoming-card"><div class="uc-ticker">Rivian Automotive, I…</div><div class="uc-name">Rivian Automotive, Inc.</div><div class="uc-date">Thu, Apr 30</div><div class="uc-calltime">5:00 PM ET ✓</div><div class="uc-tag amc">AMC</div></div><div class="upcoming-card"><div class="uc-ticker">Roku, Inc.</div><div class="uc-name">Roku, Inc.</div><div class="uc-date">Thu, Apr 30</div><div class="uc-calltime">5:00 PM ET ✓</div><div class="uc-tag amc">AMC</div></div><div class="upcoming-card"><div class="uc-ticker">Pinterest, Inc.</div><div class="uc-name">Pinterest, Inc.</div><div class="uc-date">Mon, May 4</div><div class="uc-calltime">4:30 PM ET ✓</div><div class="uc-tag amc">AMC</div></div><div class="upcoming-card"><div class="uc-ticker">Palantir Technologie…</div><div class="uc-name">Palantir Technologies, Inc.</div><div class="uc-date">Mon, May 4</div><div class="uc-calltime">5:00 PM ET ✓</div><div class="uc-tag amc">AMC</div></div><div class="upcoming-card"><div class="uc-ticker">Grab Holdings Ltd. (…</div><div class="uc-name">Grab Holdings Ltd. (Singapore)</div><div class="uc-date">Mon, May 4</div><div class="uc-calltime">8:00 PM ET ✓</div><div class="uc-tag amc">AMC</div></div><div class="upcoming-card"><div class="uc-ticker">PayPal Holdings, Inc…</div><div class="uc-name">PayPal Holdings, Inc.</div><div class="uc-date">Tue, May 5</div><div class="uc-calltime">8:00 AM ET ✓</div><div class="uc-tag bmo">BMO</div></div><div class="upcoming-card"><div class="uc-ticker">Procore Technologies…</div><div class="uc-name">Procore Technologies, Inc.</div><div class="uc-date">Tue, May 5</div><div class="uc-calltime">8:30 AM ET ✓</div><div class="uc-tag bmo">BMO</div></div><div class="upcoming-card"><div class="uc-ticker">KKR &amp; Co., Inc.</div><div class="uc-name">KKR &amp; Co., Inc.</div><div class="uc-date">Tue, May 5</div><div class="uc-calltime">10:00 AM ET ✓</div><div class="uc-tag unk">TBC</div></div><div class="upcoming-card"><div class="uc-ticker">Advanced Micro Devic…</div><div class="uc-name">Advanced Micro Devices, Inc.</div><div class="uc-date">Tue, May 5</div><div class="uc-calltime">5:00 PM ET ✓</div><div class="uc-tag amc">AMC</div></div><div class="upcoming-card"><div class="uc-ticker">Strategy, Inc.</div><div class="uc-name">Strategy, Inc.</div><div class="uc-date">Tue, May 5</div><div class="uc-calltime">5:00 PM ET ✓</div><div class="uc-tag amc">AMC</div></div><div class="upcoming-card"><div class="uc-ticker">Lucid Group, Inc.</div><div class="uc-name">Lucid Group, Inc.</div><div class="uc-date">Tue, May 5</div><div class="uc-calltime">5:30 PM ET ✓</div><div class="uc-tag amc">AMC</div></div><div class="upcoming-card"><div class="uc-ticker">Ferrari NV</div><div class="uc-name">Ferrari NV</div><div class="uc-date">Tue, May 5</div><div class="uc-calltime">TBC ✓</div><div class="uc-tag unk">TBC</div></div><div class="upcoming-card"><div class="uc-ticker">Shopify, Inc.</div><div class="uc-name">Shopify, Inc.</div><div class="uc-date">Tue, May 5</div><div class="uc-calltime">TBC ✓</div><div class="uc-tag unk">TBC</div></div><div class="upcoming-card"><div class="uc-ticker">Uber Technologies, I…</div><div class="uc-name">Uber Technologies, Inc.</div><div class="uc-date">Wed, May 6</div><div class="uc-calltime">8:00 AM ET ✓</div><div class="uc-tag bmo">BMO</div></div><div class="upcoming-card"><div class="uc-ticker">Apollo Global Manage…</div><div class="uc-name">Apollo Global Management, Inc.</div><div class="uc-date">Wed, May 6</div><div class="uc-calltime">8:30 AM ET ✓</div><div class="uc-tag bmo">BMO</div></div><div class="upcoming-card"><div class="uc-ticker">Maplebear, Inc.</div><div class="uc-name">Maplebear, Inc.</div><div class="uc-date">Wed, May 6</div><div class="uc-calltime">8:30 AM ET ✓</div><div class="uc-tag bmo">BMO</div></div><div class="upcoming-card"><div class="uc-ticker">The Walt Disney Co.</div><div class="uc-name">The Walt Disney Co.</div><div class="uc-date">Wed, May 6</div><div class="uc-calltime">8:30 AM ET ✓</div><div class="uc-tag bmo">BMO</div></div><div class="upcoming-card"><div class="uc-ticker">DoorDash, Inc.</div><div class="uc-name">DoorDash, Inc.</div><div class="uc-date">Wed, May 6</div><div class="uc-calltime">4:30 PM ET ✓</div><div class="uc-tag amc">AMC</div></div><div class="upcoming-card"><div class="uc-ticker">HubSpot, Inc.</div><div class="uc-name">HubSpot, Inc.</div><div class="uc-date">Wed, May 6</div><div class="uc-calltime">4:30 PM ET</div><div class="uc-tag amc">AMC</div></div><div class="upcoming-card"><div class="uc-ticker">Applovin Corp.</div><div class="uc-name">Applovin Corp.</div><div class="uc-date">Wed, May 6</div><div class="uc-calltime">5:00 PM ET ✓</div><div class="uc-tag amc">AMC</div></div><div class="upcoming-card"><div class="uc-ticker">Arm Holdings Plc</div><div class="uc-name">Arm Holdings Plc</div><div class="uc-date">Wed, May 6</div><div class="uc-calltime">5:00 PM ET ✓</div><div class="uc-tag amc">AMC</div></div><div class="upcoming-card"><div class="uc-ticker">Lyft, Inc.</div><div class="uc-name">Lyft, Inc.</div><div class="uc-date">Wed, May 6</div><div class="uc-calltime">5:00 PM ET</div><div class="uc-tag amc">AMC</div></div><div class="upcoming-card"><div class="uc-ticker">Warner Bros. Discove…</div><div class="uc-name">Warner Bros. Discovery, Inc.</div><div class="uc-date">Thu, May 7</div><div class="uc-calltime">8:00 AM ET</div><div class="uc-tag bmo">BMO</div></div><div class="upcoming-card"><div class="uc-ticker">The Carlyle Group In…</div><div class="uc-name">The Carlyle Group Inc.</div><div class="uc-date">Thu, May 7</div><div class="uc-calltime">8:30 AM ET ✓</div><div class="uc-tag bmo">BMO</div></div><div class="upcoming-card"><div class="uc-ticker">Unity Software, Inc.</div><div class="uc-name">Unity Software, Inc.</div><div class="uc-date">Thu, May 7</div><div class="uc-calltime">8:30 AM ET ✓</div><div class="uc-tag bmo">BMO</div></div><div class="upcoming-card"><div class="uc-ticker">Airbnb, Inc.</div><div class="uc-name">Airbnb, Inc.</div><div class="uc-date">Thu, May 7</div><div class="uc-calltime">5:00 PM ET ✓</div><div class="uc-tag amc">AMC</div></div><div class="upcoming-card"><div class="uc-ticker">Cloudflare, Inc.</div><div class="uc-name">Cloudflare, Inc.</div><div class="uc-date">Thu, May 7</div><div class="uc-calltime">5:00 PM ET ✓</div><div class="uc-tag amc">AMC</div></div><div class="upcoming-card"><div class="uc-ticker">Block, Inc.</div><div class="uc-name">Block, Inc.</div><div class="uc-date">Thu, May 7</div><div class="uc-calltime">5:00 PM ET ✓</div><div class="uc-tag amc">AMC</div></div><div class="upcoming-card"><div class="uc-ticker">MercadoLibre, Inc.</div><div class="uc-name">MercadoLibre, Inc.</div><div class="uc-date">Thu, May 7</div><div class="uc-calltime">5:00 PM ET</div><div class="uc-tag amc">AMC</div></div><div class="upcoming-card"><div class="uc-ticker">Coinbase Global, Inc…</div><div class="uc-name">Coinbase Global, Inc.</div><div class="uc-date">Thu, May 7</div><div class="uc-calltime">5:30 PM ET ✓</div><div class="uc-tag amc">AMC</div></div><div class="upcoming-card"><div class="uc-ticker">Circle Internet Grou…</div><div class="uc-name">Circle Internet Group, Inc.</div><div class="uc-date">Mon, May 11</div><div class="uc-calltime">8:00 AM ET ✓</div><div class="uc-tag bmo">BMO</div></div><div class="upcoming-card"><div class="uc-ticker">Tencent Music Entert…</div><div class="uc-name">Tencent Music Entertainment Group</div><div class="uc-date">Tue, May 12</div><div class="uc-calltime">7:00 AM ET ✓</div><div class="uc-tag bmo">BMO</div></div><div class="upcoming-card"><div class="uc-ticker">Fox Corp.</div><div class="uc-name">Fox Corp.</div><div class="uc-date">Tue, May 12</div><div class="uc-calltime">8:30 AM ET</div><div class="uc-tag bmo">BMO</div></div><div class="upcoming-card"><div class="uc-ticker">Origin Materials, In…</div><div class="uc-name">Origin Materials, Inc.</div><div class="uc-date">Tue, May 12</div><div class="uc-calltime">5:00 PM ET</div><div class="uc-tag amc">AMC</div></div><div class="upcoming-card"><div class="uc-ticker">Coupang, Inc.</div><div class="uc-name">Coupang, Inc.</div><div class="uc-date">Tue, May 12</div><div class="uc-calltime">5:30 PM ET</div><div class="uc-tag amc">AMC</div></div><div class="upcoming-card"><div class="uc-ticker">ASICS Corp.</div><div class="uc-name">ASICS Corp.</div><div class="uc-date">Wed, May 13</div><div class="uc-calltime">2:00 AM ET</div><div class="uc-tag bmo">BMO</div></div><div class="upcoming-card"><div class="uc-ticker">SoftBank Group Corp.</div><div class="uc-name">SoftBank Group Corp.</div><div class="uc-date">Wed, May 13</div><div class="uc-calltime">3:30 AM ET ✓</div><div class="uc-tag bmo">BMO</div></div><div class="upcoming-card"><div class="uc-ticker">Tencent Holdings Ltd…</div><div class="uc-name">Tencent Holdings Ltd.</div><div class="uc-date">Wed, May 13</div><div class="uc-calltime">8:00 AM ET</div><div class="uc-tag bmo">BMO</div></div><div class="upcoming-card"><div class="uc-ticker">The Trade Desk, Inc.</div><div class="uc-name">The Trade Desk, Inc.</div><div class="uc-date">Wed, May 13</div><div class="uc-calltime">5:00 PM ET</div><div class="uc-tag amc">AMC</div></div><div class="upcoming-card"><div class="uc-ticker">Alibaba Group Holdin…</div><div class="uc-name">Alibaba Group Holding Ltd.</div><div class="uc-date">Thu, May 14</div><div class="uc-calltime">7:30 AM ET</div><div class="uc-tag bmo">BMO</div></div><div class="upcoming-card"><div class="uc-ticker">Walmart, Inc.</div><div class="uc-name">Walmart, Inc.</div><div class="uc-date">Thu, May 14</div><div class="uc-calltime">8:00 AM ET</div><div class="uc-tag bmo">BMO</div></div><div class="upcoming-card"><div class="uc-ticker">VF Corp.</div><div class="uc-name">VF Corp.</div><div class="uc-date">Fri, May 15</div><div class="uc-calltime">8:00 AM ET</div><div class="uc-tag bmo">BMO</div></div></div>
+  <div id="upcomingGrid" class="upcoming-grid"><div class="upcoming-card"><div class="uc-ticker">Polestar Automotive…</div><div class="uc-name">Polestar Automotive Holding UK Plc</div><div class="uc-date">Fri, Apr 17</div><div class="uc-calltime">8:00 AM ET ✓</div><div class="uc-tag bmo">BMO</div></div><div class="upcoming-card"><div class="uc-ticker">AT&amp;T, Inc.</div><div class="uc-name">AT&amp;T, Inc.</div><div class="uc-date">Wed, Apr 22</div><div class="uc-calltime">8:30 AM ET ✓</div><div class="uc-tag bmo">BMO</div></div><div class="upcoming-card"><div class="uc-ticker">International Busine…</div><div class="uc-name">International Business Machines Corp.</div><div class="uc-date">Wed, Apr 22</div><div class="uc-calltime">5:00 PM ET ✓</div><div class="uc-tag amc">AMC</div></div><div class="upcoming-card"><div class="uc-ticker">ServiceNow, Inc.</div><div class="uc-name">ServiceNow, Inc.</div><div class="uc-date">Wed, Apr 22</div><div class="uc-calltime">5:00 PM ET ✓</div><div class="uc-tag amc">AMC</div></div><div class="upcoming-card"><div class="uc-ticker">Tesla, Inc.</div><div class="uc-name">Tesla, Inc.</div><div class="uc-date">Wed, Apr 22</div><div class="uc-calltime">5:30 PM ET ✓</div><div class="uc-tag amc">AMC</div></div><div class="upcoming-card"><div class="uc-ticker">Comcast Corp.</div><div class="uc-name">Comcast Corp.</div><div class="uc-date">Thu, Apr 23</div><div class="uc-calltime">8:30 AM ET ✓</div><div class="uc-tag bmo">BMO</div></div><div class="upcoming-card"><div class="uc-ticker">Blackstone, Inc.</div><div class="uc-name">Blackstone, Inc.</div><div class="uc-date">Thu, Apr 23</div><div class="uc-calltime">9:00 AM ET ✓</div><div class="uc-tag bmo">BMO</div></div><div class="upcoming-card"><div class="uc-ticker">Snap, Inc.</div><div class="uc-name">Snap, Inc.</div><div class="uc-date">Thu, Apr 23</div><div class="uc-calltime">10:00 AM ET ✓</div><div class="uc-tag unk">TBC</div></div><div class="upcoming-card"><div class="uc-ticker">Intel Corp.</div><div class="uc-name">Intel Corp.</div><div class="uc-date">Thu, Apr 23</div><div class="uc-calltime">5:00 PM ET ✓</div><div class="uc-tag amc">AMC</div></div><div class="upcoming-card"><div class="uc-ticker">Verizon Communicatio…</div><div class="uc-name">Verizon Communications, Inc.</div><div class="uc-date">Mon, Apr 27</div><div class="uc-calltime">8:30 AM ET ✓</div><div class="uc-tag bmo">BMO</div></div><div class="upcoming-card"><div class="uc-ticker">Spotify Technology S…</div><div class="uc-name">Spotify Technology SA</div><div class="uc-date">Tue, Apr 28</div><div class="uc-calltime">8:00 AM ET ✓</div><div class="uc-tag bmo">BMO</div></div><div class="upcoming-card"><div class="uc-ticker">Hilton Worldwide Hol…</div><div class="uc-name">Hilton Worldwide Holdings, Inc.</div><div class="uc-date">Tue, Apr 28</div><div class="uc-calltime">9:00 AM ET ✓</div><div class="uc-tag bmo">BMO</div></div><div class="upcoming-card"><div class="uc-ticker">T-Mobile US, Inc.</div><div class="uc-name">T-Mobile US, Inc.</div><div class="uc-date">Tue, Apr 28</div><div class="uc-calltime">4:30 PM ET ✓</div><div class="uc-tag amc">AMC</div></div><div class="upcoming-card"><div class="uc-ticker">Robinhood Markets, I…</div><div class="uc-name">Robinhood Markets, Inc.</div><div class="uc-date">Tue, Apr 28</div><div class="uc-calltime">5:00 PM ET ✓</div><div class="uc-tag amc">AMC</div></div><div class="upcoming-card"><div class="uc-ticker">Etsy, Inc.</div><div class="uc-name">Etsy, Inc.</div><div class="uc-date">Wed, Apr 29</div><div class="uc-calltime">8:30 AM ET ✓</div><div class="uc-tag bmo">BMO</div></div><div class="upcoming-card"><div class="uc-ticker">adidas AG</div><div class="uc-name">adidas AG</div><div class="uc-date">Wed, Apr 29</div><div class="uc-calltime">9:00 AM ET</div><div class="uc-tag bmo">BMO</div></div><div class="upcoming-card"><div class="uc-ticker">Porsche AG</div><div class="uc-name">Porsche AG</div><div class="uc-date">Wed, Apr 29</div><div class="uc-calltime">12:00 PM ET ✓</div><div class="uc-tag unk">TBC</div></div><div class="upcoming-card"><div class="uc-ticker">Alphabet, Inc.</div><div class="uc-name">Alphabet, Inc.</div><div class="uc-date">Wed, Apr 29</div><div class="uc-calltime">4:30 PM ET ✓</div><div class="uc-tag amc">AMC</div></div><div class="upcoming-card"><div class="uc-ticker">Amazon.com, Inc.</div><div class="uc-name">Amazon.com, Inc.</div><div class="uc-date">Wed, Apr 29</div><div class="uc-calltime">5:30 PM ET ✓</div><div class="uc-tag amc">AMC</div></div><div class="upcoming-card"><div class="uc-ticker">Meta Platforms, Inc.</div><div class="uc-name">Meta Platforms, Inc.</div><div class="uc-date">Wed, Apr 29</div><div class="uc-calltime">5:30 PM ET ✓</div><div class="uc-tag amc">AMC</div></div><div class="upcoming-card"><div class="uc-ticker">Microsoft Corp.</div><div class="uc-name">Microsoft Corp.</div><div class="uc-date">Wed, Apr 29</div><div class="uc-calltime">5:30 PM ET ✓</div><div class="uc-tag amc">AMC</div></div><div class="upcoming-card"><div class="uc-ticker">Samsung Electronics…</div><div class="uc-name">Samsung Electronics Co., Ltd.</div><div class="uc-date">Wed, Apr 29</div><div class="uc-calltime">9:00 PM ET ✓</div><div class="uc-tag amc">AMC</div></div><div class="upcoming-card"><div class="uc-ticker">Datadog, Inc.</div><div class="uc-name">Datadog, Inc.</div><div class="uc-date">Thu, Apr 30</div><div class="uc-calltime">8:00 AM ET</div><div class="uc-tag bmo">BMO</div></div><div class="upcoming-card"><div class="uc-ticker">Hyatt Hotels Corp.</div><div class="uc-name">Hyatt Hotels Corp.</div><div class="uc-date">Thu, Apr 30</div><div class="uc-calltime">10:00 AM ET ✓</div><div class="uc-tag unk">TBC</div></div><div class="upcoming-card"><div class="uc-ticker">Reddit, Inc.</div><div class="uc-name">Reddit, Inc.</div><div class="uc-date">Thu, Apr 30</div><div class="uc-calltime">4:30 PM ET ✓</div><div class="uc-tag amc">AMC</div></div><div class="upcoming-card"><div class="uc-ticker">Roblox Corp.</div><div class="uc-name">Roblox Corp.</div><div class="uc-date">Thu, Apr 30</div><div class="uc-calltime">4:30 PM ET ✓</div><div class="uc-tag amc">AMC</div></div><div class="upcoming-card"><div class="uc-ticker">Apple, Inc.</div><div class="uc-name">Apple, Inc.</div><div class="uc-date">Thu, Apr 30</div><div class="uc-calltime">5:00 PM ET ✓</div><div class="uc-tag amc">AMC</div></div><div class="upcoming-card"><div class="uc-ticker">Atlassian Corp.</div><div class="uc-name">Atlassian Corp.</div><div class="uc-date">Thu, Apr 30</div><div class="uc-calltime">5:00 PM ET ✓</div><div class="uc-tag amc">AMC</div></div><div class="upcoming-card"><div class="uc-ticker">Rivian Automotive, I…</div><div class="uc-name">Rivian Automotive, Inc.</div><div class="uc-date">Thu, Apr 30</div><div class="uc-calltime">5:00 PM ET ✓</div><div class="uc-tag amc">AMC</div></div><div class="upcoming-card"><div class="uc-ticker">Roku, Inc.</div><div class="uc-name">Roku, Inc.</div><div class="uc-date">Thu, Apr 30</div><div class="uc-calltime">5:00 PM ET ✓</div><div class="uc-tag amc">AMC</div></div><div class="upcoming-card"><div class="uc-ticker">Pinterest, Inc.</div><div class="uc-name">Pinterest, Inc.</div><div class="uc-date">Mon, May 4</div><div class="uc-calltime">4:30 PM ET ✓</div><div class="uc-tag amc">AMC</div></div><div class="upcoming-card"><div class="uc-ticker">Paramount Skydance C…</div><div class="uc-name">Paramount Skydance Corp.</div><div class="uc-date">Mon, May 4</div><div class="uc-calltime">4:45 PM ET ✓</div><div class="uc-tag amc">AMC</div></div><div class="upcoming-card"><div class="uc-ticker">Palantir Technologie…</div><div class="uc-name">Palantir Technologies, Inc.</div><div class="uc-date">Mon, May 4</div><div class="uc-calltime">5:00 PM ET ✓</div><div class="uc-tag amc">AMC</div></div><div class="upcoming-card"><div class="uc-ticker">Grab Holdings Ltd. (…</div><div class="uc-name">Grab Holdings Ltd. (Singapore)</div><div class="uc-date">Mon, May 4</div><div class="uc-calltime">8:00 PM ET ✓</div><div class="uc-tag amc">AMC</div></div><div class="upcoming-card"><div class="uc-ticker">PayPal Holdings, Inc…</div><div class="uc-name">PayPal Holdings, Inc.</div><div class="uc-date">Tue, May 5</div><div class="uc-calltime">8:00 AM ET ✓</div><div class="uc-tag bmo">BMO</div></div><div class="upcoming-card"><div class="uc-ticker">Procore Technologies…</div><div class="uc-name">Procore Technologies, Inc.</div><div class="uc-date">Tue, May 5</div><div class="uc-calltime">8:30 AM ET ✓</div><div class="uc-tag bmo">BMO</div></div><div class="upcoming-card"><div class="uc-ticker">KKR &amp; Co., Inc.</div><div class="uc-name">KKR &amp; Co., Inc.</div><div class="uc-date">Tue, May 5</div><div class="uc-calltime">10:00 AM ET ✓</div><div class="uc-tag unk">TBC</div></div><div class="upcoming-card"><div class="uc-ticker">Advanced Micro Devic…</div><div class="uc-name">Advanced Micro Devices, Inc.</div><div class="uc-date">Tue, May 5</div><div class="uc-calltime">5:00 PM ET ✓</div><div class="uc-tag amc">AMC</div></div><div class="upcoming-card"><div class="uc-ticker">Strategy, Inc.</div><div class="uc-name">Strategy, Inc.</div><div class="uc-date">Tue, May 5</div><div class="uc-calltime">5:00 PM ET ✓</div><div class="uc-tag amc">AMC</div></div><div class="upcoming-card"><div class="uc-ticker">Lucid Group, Inc.</div><div class="uc-name">Lucid Group, Inc.</div><div class="uc-date">Tue, May 5</div><div class="uc-calltime">5:30 PM ET ✓</div><div class="uc-tag amc">AMC</div></div><div class="upcoming-card"><div class="uc-ticker">Ferrari NV</div><div class="uc-name">Ferrari NV</div><div class="uc-date">Tue, May 5</div><div class="uc-calltime">TBC ✓</div><div class="uc-tag unk">TBC</div></div><div class="upcoming-card"><div class="uc-ticker">Shopify, Inc.</div><div class="uc-name">Shopify, Inc.</div><div class="uc-date">Tue, May 5</div><div class="uc-calltime">TBC ✓</div><div class="uc-tag unk">TBC</div></div><div class="upcoming-card"><div class="uc-ticker">Uber Technologies, I…</div><div class="uc-name">Uber Technologies, Inc.</div><div class="uc-date">Wed, May 6</div><div class="uc-calltime">8:00 AM ET ✓</div><div class="uc-tag bmo">BMO</div></div><div class="upcoming-card"><div class="uc-ticker">Apollo Global Manage…</div><div class="uc-name">Apollo Global Management, Inc.</div><div class="uc-date">Wed, May 6</div><div class="uc-calltime">8:30 AM ET ✓</div><div class="uc-tag bmo">BMO</div></div><div class="upcoming-card"><div class="uc-ticker">Maplebear, Inc.</div><div class="uc-name">Maplebear, Inc.</div><div class="uc-date">Wed, May 6</div><div class="uc-calltime">8:30 AM ET ✓</div><div class="uc-tag bmo">BMO</div></div><div class="upcoming-card"><div class="uc-ticker">The Walt Disney Co.</div><div class="uc-name">The Walt Disney Co.</div><div class="uc-date">Wed, May 6</div><div class="uc-calltime">8:30 AM ET ✓</div><div class="uc-tag bmo">BMO</div></div><div class="upcoming-card"><div class="uc-ticker">DoorDash, Inc.</div><div class="uc-name">DoorDash, Inc.</div><div class="uc-date">Wed, May 6</div><div class="uc-calltime">4:30 PM ET ✓</div><div class="uc-tag amc">AMC</div></div><div class="upcoming-card"><div class="uc-ticker">HubSpot, Inc.</div><div class="uc-name">HubSpot, Inc.</div><div class="uc-date">Wed, May 6</div><div class="uc-calltime">4:30 PM ET</div><div class="uc-tag amc">AMC</div></div><div class="upcoming-card"><div class="uc-ticker">Applovin Corp.</div><div class="uc-name">Applovin Corp.</div><div class="uc-date">Wed, May 6</div><div class="uc-calltime">5:00 PM ET ✓</div><div class="uc-tag amc">AMC</div></div><div class="upcoming-card"><div class="uc-ticker">Arm Holdings Plc</div><div class="uc-name">Arm Holdings Plc</div><div class="uc-date">Wed, May 6</div><div class="uc-calltime">5:00 PM ET ✓</div><div class="uc-tag amc">AMC</div></div><div class="upcoming-card"><div class="uc-ticker">Lyft, Inc.</div><div class="uc-name">Lyft, Inc.</div><div class="uc-date">Wed, May 6</div><div class="uc-calltime">5:00 PM ET</div><div class="uc-tag amc">AMC</div></div><div class="upcoming-card"><div class="uc-ticker">Warner Bros. Discove…</div><div class="uc-name">Warner Bros. Discovery, Inc.</div><div class="uc-date">Thu, May 7</div><div class="uc-calltime">8:00 AM ET</div><div class="uc-tag bmo">BMO</div></div><div class="upcoming-card"><div class="uc-ticker">The Carlyle Group In…</div><div class="uc-name">The Carlyle Group Inc.</div><div class="uc-date">Thu, May 7</div><div class="uc-calltime">8:30 AM ET ✓</div><div class="uc-tag bmo">BMO</div></div><div class="upcoming-card"><div class="uc-ticker">Unity Software, Inc.</div><div class="uc-name">Unity Software, Inc.</div><div class="uc-date">Thu, May 7</div><div class="uc-calltime">8:30 AM ET ✓</div><div class="uc-tag bmo">BMO</div></div><div class="upcoming-card"><div class="uc-ticker">Airbnb, Inc.</div><div class="uc-name">Airbnb, Inc.</div><div class="uc-date">Thu, May 7</div><div class="uc-calltime">5:00 PM ET ✓</div><div class="uc-tag amc">AMC</div></div><div class="upcoming-card"><div class="uc-ticker">Cloudflare, Inc.</div><div class="uc-name">Cloudflare, Inc.</div><div class="uc-date">Thu, May 7</div><div class="uc-calltime">5:00 PM ET ✓</div><div class="uc-tag amc">AMC</div></div><div class="upcoming-card"><div class="uc-ticker">Block, Inc.</div><div class="uc-name">Block, Inc.</div><div class="uc-date">Thu, May 7</div><div class="uc-calltime">5:00 PM ET ✓</div><div class="uc-tag amc">AMC</div></div><div class="upcoming-card"><div class="uc-ticker">MercadoLibre, Inc.</div><div class="uc-name">MercadoLibre, Inc.</div><div class="uc-date">Thu, May 7</div><div class="uc-calltime">5:00 PM ET</div><div class="uc-tag amc">AMC</div></div><div class="upcoming-card"><div class="uc-ticker">Coinbase Global, Inc…</div><div class="uc-name">Coinbase Global, Inc.</div><div class="uc-date">Thu, May 7</div><div class="uc-calltime">5:30 PM ET ✓</div><div class="uc-tag amc">AMC</div></div><div class="upcoming-card"><div class="uc-ticker">Circle Internet Grou…</div><div class="uc-name">Circle Internet Group, Inc.</div><div class="uc-date">Mon, May 11</div><div class="uc-calltime">8:00 AM ET ✓</div><div class="uc-tag bmo">BMO</div></div><div class="upcoming-card"><div class="uc-ticker">Tencent Music Entert…</div><div class="uc-name">Tencent Music Entertainment Group</div><div class="uc-date">Tue, May 12</div><div class="uc-calltime">7:00 AM ET ✓</div><div class="uc-tag bmo">BMO</div></div><div class="upcoming-card"><div class="uc-ticker">Fox Corp.</div><div class="uc-name">Fox Corp.</div><div class="uc-date">Tue, May 12</div><div class="uc-calltime">8:30 AM ET</div><div class="uc-tag bmo">BMO</div></div><div class="upcoming-card"><div class="uc-ticker">Origin Materials, In…</div><div class="uc-name">Origin Materials, Inc.</div><div class="uc-date">Tue, May 12</div><div class="uc-calltime">5:00 PM ET</div><div class="uc-tag amc">AMC</div></div><div class="upcoming-card"><div class="uc-ticker">Coupang, Inc.</div><div class="uc-name">Coupang, Inc.</div><div class="uc-date">Tue, May 12</div><div class="uc-calltime">5:30 PM ET</div><div class="uc-tag amc">AMC</div></div><div class="upcoming-card"><div class="uc-ticker">ASICS Corp.</div><div class="uc-name">ASICS Corp.</div><div class="uc-date">Wed, May 13</div><div class="uc-calltime">2:00 AM ET</div><div class="uc-tag bmo">BMO</div></div><div class="upcoming-card"><div class="uc-ticker">SoftBank Group Corp.</div><div class="uc-name">SoftBank Group Corp.</div><div class="uc-date">Wed, May 13</div><div class="uc-calltime">3:30 AM ET ✓</div><div class="uc-tag bmo">BMO</div></div><div class="upcoming-card"><div class="uc-ticker">Tencent Holdings Ltd…</div><div class="uc-name">Tencent Holdings Ltd.</div><div class="uc-date">Wed, May 13</div><div class="uc-calltime">8:00 AM ET</div><div class="uc-tag bmo">BMO</div></div><div class="upcoming-card"><div class="uc-ticker">The Trade Desk, Inc.</div><div class="uc-name">The Trade Desk, Inc.</div><div class="uc-date">Wed, May 13</div><div class="uc-calltime">5:00 PM ET</div><div class="uc-tag amc">AMC</div></div><div class="upcoming-card"><div class="uc-ticker">Alibaba Group Holdin…</div><div class="uc-name">Alibaba Group Holding Ltd.</div><div class="uc-date">Thu, May 14</div><div class="uc-calltime">7:30 AM ET</div><div class="uc-tag bmo">BMO</div></div><div class="upcoming-card"><div class="uc-ticker">Walmart, Inc.</div><div class="uc-name">Walmart, Inc.</div><div class="uc-date">Thu, May 14</div><div class="uc-calltime">8:00 AM ET</div><div class="uc-tag bmo">BMO</div></div><div class="upcoming-card"><div class="uc-ticker">VF Corp.</div><div class="uc-name">VF Corp.</div><div class="uc-date">Fri, May 15</div><div class="uc-calltime">8:00 AM ET</div><div class="uc-tag bmo">BMO</div></div></div>
 </div>
 
 <!-- Tooltip -->
-<div id="tooltip" style="display: none; left: 671px; top: 333px;">
-  <div class="tt-ticker" id="ttTicker">PayPal Holdings, Inc.</div>
-  <div class="tt-name" id="ttName">PayPal Holdings, Inc.</div>
-  <div class="tt-row"><span class="tt-label">Date</span><span class="tt-val" id="ttDate">Tue, May 5, 2026</span></div>
-  <div class="tt-row"><span class="tt-label">Call time</span><span class="tt-val" id="ttTime">8:00 AM ET<span class="tt-conf">✓</span></span></div>
-  <div class="tt-row"><span class="tt-label">Timing</span><span class="tt-val" id="ttTiming">Before market open</span></div>
-  <div class="tt-row"><span class="tt-label">Status</span><span class="tt-val" id="ttStatus">Confirmed</span></div>
+<div id="tooltip">
+  <div class="tt-ticker" id="ttTicker"></div>
+  <div class="tt-name" id="ttName"></div>
+  <div class="tt-row"><span class="tt-label">Date</span><span class="tt-val" id="ttDate"></span></div>
+  <div class="tt-row"><span class="tt-label">Call time</span><span class="tt-val" id="ttTime"></span></div>
+  <div class="tt-row"><span class="tt-label">Timing</span><span class="tt-val" id="ttTiming"></span></div>
+  <div class="tt-row"><span class="tt-label">Status</span><span class="tt-val" id="ttStatus"></span></div>
 </div>
 
 <!-- Day panel -->
-<div id="dayOverlay" class=""></div>
-<div id="dayPanel" class="">
+<div id="dayOverlay"></div>
+<div id="dayPanel">
   <div class="panel-head">
-    <div><div class="panel-date" id="panelDate">Tuesday, May 5, 2026</div><div class="panel-count" id="panelCount">8 earnings reports</div></div>
+    <div><div class="panel-date" id="panelDate"></div><div class="panel-count" id="panelCount"></div></div>
     <button class="panel-close" id="panelClose">✕</button>
   </div>
-  <div class="panel-body" id="panelBody"><div class="panel-event"><div class="pe-top"><div class="pe-ticker">PayPal Holdings, Inc.</div><div class="pe-tag conf">Confirmed</div></div><div class="pe-name">PayPal Holdings, Inc.</div><div class="pe-time">8:00 AM ET<span class="conf">✓ confirmed</span></div></div><div class="panel-event"><div class="pe-top"><div class="pe-ticker">Procore Technologies, Inc.</div><div class="pe-tag conf">Confirmed</div></div><div class="pe-name">Procore Technologies, Inc.</div><div class="pe-time">8:30 AM ET<span class="conf">✓ confirmed</span></div></div><div class="panel-event"><div class="pe-top"><div class="pe-ticker">KKR &amp; Co., Inc.</div><div class="pe-tag conf">Confirmed</div></div><div class="pe-name">KKR &amp; Co., Inc.</div><div class="pe-time">10:00 AM ET<span class="conf">✓ confirmed</span></div></div><div class="panel-event"><div class="pe-top"><div class="pe-ticker">Advanced Micro Devices, Inc.</div><div class="pe-tag conf">Confirmed</div></div><div class="pe-name">Advanced Micro Devices, Inc.</div><div class="pe-time">5:00 PM ET<span class="conf">✓ confirmed</span></div></div><div class="panel-event"><div class="pe-top"><div class="pe-ticker">Strategy, Inc.</div><div class="pe-tag conf">Confirmed</div></div><div class="pe-name">Strategy, Inc.</div><div class="pe-time">5:00 PM ET<span class="conf">✓ confirmed</span></div></div><div class="panel-event"><div class="pe-top"><div class="pe-ticker">Lucid Group, Inc.</div><div class="pe-tag conf">Confirmed</div></div><div class="pe-name">Lucid Group, Inc.</div><div class="pe-time">5:30 PM ET<span class="conf">✓ confirmed</span></div></div><div class="panel-event"><div class="pe-top"><div class="pe-ticker">Ferrari NV</div><div class="pe-tag conf">Confirmed</div></div><div class="pe-name">Ferrari NV</div><div class="pe-time">TBC<span class="conf">✓ confirmed</span></div></div><div class="panel-event"><div class="pe-top"><div class="pe-ticker">Shopify, Inc.</div><div class="pe-tag conf">Confirmed</div></div><div class="pe-name">Shopify, Inc.</div><div class="pe-time">TBC<span class="conf">✓ confirmed</span></div></div></div>
+  <div class="panel-body" id="panelBody"></div>
 </div>
 
 <!-- Settings panel -->
@@ -782,7 +345,7 @@ body{font-family:"IBM Plex Sans",sans-serif;background:var(--bg);color:var(--tex
         <button class="sp-btn sec" id="clearCSV">Clear data</button>
         <button class="sp-btn sec" id="exportWithData" title="Download HTML file with data embedded — share this with your team">⇩ Share file</button>
       </div>
-      <div class="data-status" id="dataStatus"></div>
+      <div class="data-status" id="dataStatus">117 earnings entries loaded.</div>
     </div>
 
 
@@ -797,7 +360,8 @@ body{font-family:"IBM Plex Sans",sans-serif;background:var(--bg);color:var(--tex
 let earningsData    = {};  // date (YYYY-MM-DD) → [event objects]
 let rangeFilter     = "all";
 let showWeekends    = true;
-let currentView     = "calendar"; // "calendar" or "list"
+let currentView     = "calendar"; // "calendar", "week", or "list"
+let currentWeekStart = null; // Monday of displayed week in week view
 let currentYear, currentMonth;
 const today = new Date();
 today.setHours(0,0,0,0);
@@ -978,6 +542,93 @@ function buildCalendar() {
 }
 
 
+
+// ─────────────────────────────────────────────
+//  WEEK VIEW
+// ─────────────────────────────────────────────
+function getWeekStart(d) {
+  // Returns Monday of the week containing d
+  const day = new Date(d);
+  const dow = day.getDay(); // 0=Sun
+  const diff = dow === 0 ? -6 : 1 - dow; // shift to Monday
+  day.setDate(day.getDate() + diff);
+  day.setHours(0,0,0,0);
+  return day;
+}
+
+function buildWeekView() {
+  if (!currentWeekStart) currentWeekStart = getWeekStart(today);
+  const grid  = document.getElementById("weekGrid");
+  const label = document.getElementById("weekRangeLabel");
+
+  // Build array of days for this week (Mon–Sun or Mon–Fri)
+  const days = [];
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(currentWeekStart);
+    d.setDate(currentWeekStart.getDate() + i);
+    days.push(d);
+  }
+
+  // Filter weekends if needed
+  const visibleDays = showWeekends ? days : days.filter(d => d.getDay() !== 0 && d.getDay() !== 6);
+
+  // Update range label
+  const fmt = d => d.toLocaleDateString("en-US", {month:"short", day:"numeric"});
+  const yr  = visibleDays[visibleDays.length-1].getFullYear();
+  label.textContent = fmt(visibleDays[0]) + " – " + fmt(visibleDays[visibleDays.length-1]) + ", " + yr;
+
+  // Update grid columns
+  grid.className = "week-grid" + (showWeekends ? "" : " no-weekends");
+
+  // Also update legend area
+  document.querySelector(".cal-wrap .day-headers") && null; // not needed in week view
+
+  grid.innerHTML = "";
+  const DAYS = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+
+  visibleDays.forEach(d => {
+    const dateStr  = fmtDate(d);
+    const isToday  = d.toDateString() === today.toDateString();
+    const isWeekend = d.getDay() === 0 || d.getDay() === 6;
+    const evs      = (earningsData[dateStr] || []).slice()
+      .sort((a,b) => parseTimeForSort(a.callTime) - parseTimeForSort(b.callTime));
+
+    const cell = document.createElement("div");
+    cell.className = "week-cell" + (isWeekend ? " weekend" : "") + (isToday ? " today" : "");
+
+    // Header
+    const head = document.createElement("div");
+    head.className = "week-cell-head";
+    const dayNum = document.createElement("div");
+    dayNum.className = "week-day-num";
+    dayNum.textContent = d.getDate();
+    const dayLbl = document.createElement("div");
+    dayLbl.className = "week-day-label";
+    dayLbl.textContent = DAYS[d.getDay()];
+    head.appendChild(dayNum);
+    head.appendChild(dayLbl);
+    cell.appendChild(head);
+
+    if (!evs.length) {
+      const empty = document.createElement("div");
+      empty.className = "week-empty";
+      empty.textContent = "—";
+      cell.appendChild(empty);
+    } else {
+      evs.forEach(ev => {
+        const row = document.createElement("div");
+        row.className = "week-event " + (ev.confirmed ? "conf" : "unconf");
+        row.innerHTML = `<span class="week-event-name">${ev.name}</span><span class="week-event-time">${ev.callTime || ""}</span>`;
+        row.addEventListener("mouseenter", e => showTT(e, ev));
+        row.addEventListener("mousemove",  e => moveTT(e));
+        row.addEventListener("mouseleave", hideTT);
+        cell.appendChild(row);
+      });
+    }
+    grid.appendChild(cell);
+  });
+}
+
 // ─────────────────────────────────────────────
 //  LIST VIEW
 // ─────────────────────────────────────────────
@@ -1034,22 +685,20 @@ function buildListView() {
 
 function setView(v) {
   currentView = v;
-  const calWrap     = document.querySelector(".cal-wrap");
+  const calWrap      = document.querySelector(".cal-wrap");
   const upcomingWrap = document.querySelector(".upcoming-wrap");
-  const listView    = document.getElementById("listView");
-  document.getElementById("viewCalBtn").classList.toggle("active", v === "calendar");
+  const weekView     = document.getElementById("weekView");
+  const listView     = document.getElementById("listView");
+  document.getElementById("viewCalBtn").classList.toggle("active",  v === "calendar");
+  document.getElementById("viewWeekBtn").classList.toggle("active", v === "week");
   document.getElementById("viewListBtn").classList.toggle("active", v === "list");
-  if (v === "calendar") {
-    calWrap.style.display = "";
-    upcomingWrap.style.display = "";
-    listView.classList.remove("active");
-    buildCalendar();
-  } else {
-    calWrap.style.display = "none";
-    upcomingWrap.style.display = "none";
-    listView.classList.add("active");
-    buildListView();
-  }
+  calWrap.style.display      = v === "calendar" ? "" : "none";
+  upcomingWrap.style.display = v === "calendar" ? "" : "none";
+  weekView.classList.toggle("active",  v === "week");
+  listView.classList.toggle("active",  v === "list");
+  if (v === "calendar") buildCalendar();
+  else if (v === "week") buildWeekView();
+  else buildListView();
 }
 
 // ─────────────────────────────────────────────
@@ -1195,10 +844,27 @@ document.getElementById("toggleWeekends").addEventListener("click", function() {
   showWeekends = !showWeekends;
   this.classList.toggle("active", showWeekends);
   if (currentView === "calendar") buildCalendar();
+  else if (currentView === "week") buildWeekView();
   else buildListView();
 });
-document.getElementById("viewCalBtn").addEventListener("click", () => setView("calendar"));
-document.getElementById("viewListBtn").addEventListener("click", () => setView("list"));
+document.getElementById("viewCalBtn").addEventListener("click",  () => setView("calendar"));
+document.getElementById("viewWeekBtn").addEventListener("click", () => setView("week"));
+document.getElementById("viewListBtn").addEventListener("click",  () => setView("list"));
+
+document.getElementById("weekPrevBtn").addEventListener("click", () => {
+  currentWeekStart = new Date(currentWeekStart);
+  currentWeekStart.setDate(currentWeekStart.getDate() - 7);
+  buildWeekView();
+});
+document.getElementById("weekNextBtn").addEventListener("click", () => {
+  currentWeekStart = new Date(currentWeekStart);
+  currentWeekStart.setDate(currentWeekStart.getDate() + 7);
+  buildWeekView();
+});
+document.getElementById("weekTodayBtn").addEventListener("click", () => {
+  currentWeekStart = getWeekStart(today);
+  buildWeekView();
+});
 
 document.getElementById("prevBtn").addEventListener("click", () => { currentMonth--; if (currentMonth<0){currentMonth=11;currentYear--;} buildCalendar(); });
 document.getElementById("nextBtn").addEventListener("click", () => { currentMonth++; if (currentMonth>11){currentMonth=0;currentYear++;} buildCalendar(); });
@@ -1261,7 +927,7 @@ document.getElementById("exportWithData").addEventListener("click", () => {
 // ─────────────────────────────────────────────
 //  INIT  — restore saved CSV from localStorage
 // ─────────────────────────────────────────────
-localStorage.setItem("factset_csv", "Ticker\tDate\tTime\t\tCompany\t\t\tC/E\nHM.B-SE\t06/25/2026 E\t4:00 AM\tBMO\tH&M Hennes & Mauritz AB\t\t\tE\nADS-DE\t04/29/2026 E\t9:00 AM\tBMO\tadidas AG\t\t\tE\nADBE-US\t06/11/2026 E\t5:00 PM\tAMC\tAdobe, Inc.\t\t\tE\nAMD-US\t05/05/2026 C\t5:00 PM\tAMC\tAdvanced Micro Devices, Inc.\t\t\tC\nABNB-US\t05/07/2026 C\t5:00 PM\tAMC\tAirbnb, Inc.\t\t\tC\nBABA-US\t05/14/2026 E\t7:30 AM\tBMO\tAlibaba Group Holding Ltd.\t\t\tE\nGOOG-US\t04/29/2026 C\t4:30 PM\tAMC\tAlphabet, Inc.\t\t\tC\nAMZN-US\t04/29/2026 C\t5:30 PM\tAMC\tAmazon.com, Inc.\t\t\tC\nAPO-US\t05/06/2026 C\t8:30 AM\tBMO\tApollo Global Management, Inc.\t\t\tC\nAAPL-US\t04/30/2026 C\t5:00 PM\tAMC\tApple, Inc.\t\t\tC\nAPP-US\t05/06/2026 C\t5:00 PM\tAMC\tApplovin Corp.\t\t\tC\nARM-US\t05/06/2026 C\t5:00 PM\tAMC\tArm Holdings Plc\t\t\tC\n7936-JP\t05/13/2026 E\t2:00 AM\tBMO\tASICS Corp.\t\t\tE\nASML-US\t07/15/2026 E\t9:00 AM\tBMO\tASML Holding NV\t\t\tE\nT-US\t04/22/2026 C\t8:30 AM\tBMO\tAT&T, Inc.\t\t\tC\nTEAM-US\t04/30/2026 C\t5:00 PM\tAMC\tAtlassian Corp.\t\t\tC\nBIDU-US\t05/19/2026 E\t7:30 AM\tBMO\tBaidu, Inc.\t\t\tE\nBMNR-US\t#N/A\tUnspecified\t#VALUE!\tBitmine Immersion Technologies, Inc.\t\t\tE\nMSTR-US\t05/05/2026 C\t5:00 PM\tAMC\tStrategy, Inc.\t\t\tC\nNET-US\t05/07/2026 C\t5:00 PM\tAMC\tCloudflare, Inc.\t\t\tC\nBX-US\t04/23/2026 C\t9:00 AM\tBMO\tBlackstone, Inc.\t\t\tC\nXYZ-US\t05/07/2026 C\t5:00 PM\tAMC\tBlock, Inc.\t\t\tC\nAVGO-US\t06/04/2026 E\t5:00 PM\tAMC\tBroadcom Inc.\t\t\tE\nBC-IT\t08/27/2026 E\tUnspecified\t#VALUE!\tBrunello Cucinelli SpA\t\t\tE\nCHWY-US\t06/03/2026 E\t8:00 AM\tBMO\tChewy, Inc.\t\t\tE\nCRCL-US\t05/11/2026 C\t8:00 AM\tBMO\tCircle Internet Group, Inc.\t\t\tC\nCOIN-US\t05/07/2026 C\t5:30 PM\tAMC\tCoinbase Global, Inc.\t\t\tC\nCMCSA-US\t04/23/2026 C\t8:30 AM\tBMO\tComcast Corp.\t\t\tC\nCFR-CH\t05/22/2026 C\t3:30 AM\tBMO\tCompagnie Financière Richemont SA\t\t\tC\nCPNG-US\t05/12/2026 E\t5:30 PM\tAMC\tCoupang, Inc.\t\t\tE\nCRWD-US\t05/28/2026 E\t5:00 PM\tAMC\tCrowdStrike Holdings, Inc.\t\t\tE\nDDOG-US\t04/30/2026 E\t8:00 AM\tBMO\tDatadog, Inc.\t\t\tE\nDECK-US\t05/21/2026 E\t4:30 PM\tAMC\tDeckers Outdoor Corp.\t\t\tE\nDKS-US\t05/27/2026 E\t10:00 AM\tDMH\tDick's Sporting Goods, Inc.\t\t\tE\nDASH-US\t05/06/2026 C\t4:30 PM\tAMC\tDoorDash, Inc.\t\t\tC\nETSY-US\t04/29/2026 C\t8:30 AM\tBMO\tEtsy, Inc.\t\t\tC\n9983-JP\t07/09/2026 E\tUnspecified\t#VALUE!\tFast Retailing Co., Ltd.\t\t\tE\nRACE-US\t05/05/2026 C\tUnspecified\t#VALUE!\tFerrari NV\t\t\tC\nFIG-US\t06/18/2026 E\t5:00 PM\tAMC\tFigma, Inc.\t\t\tE\nFOXA-US\t05/12/2026 E\t8:30 AM\tBMO\tFox Corp.\t\t\tE\nGLOO-US\t12/23/2026 E\t5:00 PM\tAMC\tGloo Holdings, Inc.\t\t\tE\nGRAB-US\t05/04/2026 C\t8:00 PM\tAMC\tGrab Holdings Ltd. (Singapore)\t\t\tC\nRMS-FR\t07/29/2026 E\tUnspecified\t#VALUE!\tHermes International SCA\t\t\tE\nHLT-US\t04/28/2026 C\t9:00 AM\tBMO\tHilton Worldwide Holdings, Inc.\t\t\tC\nHUBS-US\t05/06/2026 E\t4:30 PM\tAMC\tHubSpot, Inc.\t\t\tE\nH-US\t04/30/2026 C\t10:00 AM\tDMH\tHyatt Hotels Corp.\t\t\tC\nIBM-US\t04/22/2026 C\t5:00 PM\tAMC\tInternational Business Machines Corp.\t\t\tC\nITX-ES\t06/03/2026 E\t4:00 AM\tBMO\tIndustria de Diseño Textil SA\t\t\tE\nINTC-US\t04/23/2026 C\t5:00 PM\tAMC\tIntel Corp.\t\t\tC\nIQ-US\t05/19/2026 E\t6:30 AM\tBMO\tiQIYI, Inc.\t\t\tE\nJD-US\t05/19/2026 E\t7:00 AM\tBMO\tJD.com, Inc.\t\t\tE\nJPM-US\t07/14/2026 C\t8:30 AM\tBMO\tJPMorgan Chase & Co.\t\t\tC\nKER-FR\t07/29/2026 E\t2:00 AM\tBMO\tKering SA\t\t\tE\nKKR-US\t05/05/2026 C\t10:00 AM\tDMH\tKKR & Co., Inc.\t\t\tC\n1024-HK\t05/25/2026 E\t7:00 AM\tBMO\tKuaishou Technology\t\t\tE\nLI-US\t05/26/2026 E\t8:00 AM\tBMO\tLi Auto, Inc.\t\t\tE\nLCID-US\t05/05/2026 C\t5:30 PM\tAMC\tLucid Group, Inc.\t\t\tC\nLULU-US\t05/28/2026 E\t4:30 PM\tAMC\tlululemon athletica, Inc.\t\t\tE\nMC-FR\t07/28/2026 E\t12:00 PM\tDMH\tLVMH Moët Hennessy Louis Vuitton SE\t\t\tE\nLYFT-US\t05/06/2026 E\t5:00 PM\tAMC\tLyft, Inc.\t\t\tE\nCART-US\t05/06/2026 C\t8:30 AM\tBMO\tMaplebear, Inc.\t\t\tC\nMELI-US\t05/07/2026 E\t5:00 PM\tAMC\tMercadoLibre, Inc.\t\t\tE\nMETA-US\t04/29/2026 C\t5:30 PM\tAMC\tMeta Platforms, Inc.\t\t\tC\nMSFT-US\t04/29/2026 C\t5:30 PM\tAMC\tMicrosoft Corp.\t\t\tC\nMONC-IT\t07/22/2026 E\t12:00 PM\tDMH\tMoncler SpA\t\t\tE\nMS-US\t07/15/2026 C\t8:30 AM\tBMO\tMorgan Stanley\t\t\tC\nNFLX-US\t04/16/2026 C\t4:45 PM\tAMC\tNetflix, Inc.\t\t\tC\nNKE-US\t06/25/2026 E\t5:00 PM\tAMC\tNIKE, Inc.\t\t\tE\nNIO-US\t06/04/2026 E\t8:00 AM\tBMO\tNIO, Inc.\t\t\tE\nNVDA-US\t05/20/2026 E\t5:00 PM\tAMC\tNVIDIA Corp.\t\t\tE\nONON-US\t05/19/2026 E\t8:00 AM\tBMO\tOn Holding AG\t\t\tE\nORCL-US\t06/16/2026 E\t5:00 PM\tAMC\tOracle Corp.\t\t\tE\nORGN-US\t05/12/2026 E\t5:00 PM\tAMC\tOrigin Materials, Inc.\t\t\tE\nPLTR-US\t05/04/2026 C\t5:00 PM\tAMC\tPalantir Technologies, Inc.\t\t\tC\nPANW-US\t05/26/2026 E\t4:30 PM\tAMC\tPalo Alto Networks, Inc.\t\t\tE\nPARA-US\t#N/A\t#N/A\t#N/A\t-\t\t\tE\nPYPL-US\t05/05/2026 C\t8:00 AM\tBMO\tPayPal Holdings, Inc.\t\t\tC\nPDD-US\t05/27/2026 E\t7:30 AM\tBMO\tPDD Holdings, Inc.\t\t\tE\nPINS-US\t05/04/2026 C\t4:30 PM\tAMC\tPinterest, Inc.\t\t\tC\nPSNY-US\t04/17/2026 C\t8:00 AM\tBMO\tPolestar Automotive Holding UK Plc\t\t\tC\nP911-DE\t04/29/2026 C\t12:00 PM\tDMH\tPorsche AG\t\t\tC\nPCOR-US\t05/05/2026 C\t8:30 AM\tBMO\tProcore Technologies, Inc.\t\t\tC\nRDDT-US\t04/30/2026 C\t4:30 PM\tAMC\tReddit, Inc.\t\t\tC\nRIVN-US\t04/30/2026 C\t5:00 PM\tAMC\tRivian Automotive, Inc.\t\t\tC\nHOOD-US\t04/28/2026 C\t5:00 PM\tAMC\tRobinhood Markets, Inc.\t\t\tC\nRBLX-US\t04/30/2026 C\t4:30 PM\tAMC\tRoblox Corp.\t\t\tC\nROKU-US\t04/30/2026 C\t5:00 PM\tAMC\tRoku, Inc.\t\t\tC\nCRM-US\t06/03/2026 E\t5:00 PM\tAMC\tSalesforce, Inc.\t\t\tE\n005930-KR\t04/29/2026 C\t9:00 PM\tAMC\tSamsung Electronics Co., Ltd.\t\t\tC\nSE-US\t05/19/2026 E\t7:30 AM\tBMO\tSea Ltd. (Singapore)\t\t\tE\nNOW-US\t04/22/2026 C\t5:00 PM\tAMC\tServiceNow, Inc.\t\t\tC\nSHOP-US\t05/05/2026 C\tUnspecified\t#VALUE!\tShopify, Inc.\t\t\tC\nSNAP-US\t04/23/2026 C\t10:00 AM\tDMH\tSnap, Inc.\t\t\tC\nSNOW-US\t05/27/2026 E\t5:00 PM\tAMC\tSnowflake, Inc.\t\t\tE\n9984-JP\t05/13/2026 C\t3:30 AM\tBMO\tSoftBank Group Corp.\t\t\tC\nSPOT-US\t04/28/2026 C\t8:00 AM\tBMO\tSpotify Technology SA\t\t\tC\nSTLA-US\t07/30/2026 C\tUnspecified\t#VALUE!\tStellantis NV\t\t\tC\nTSM-US\t04/16/2026 C\t2:00 AM\tBMO\tTaiwan Semiconductor Manufacturing Co., Ltd.\t\t\tC\nTGT-US\t05/20/2026 E\t8:00 AM\tBMO\tTarget Corp.\t\t\tE\n700-HK\t05/13/2026 E\t8:00 AM\tBMO\tTencent Holdings Ltd.\t\t\tE\nTME-US\t05/12/2026 C\t7:00 AM\tBMO\tTencent Music Entertainment Group\t\t\tC\nTSLA-US\t04/22/2026 C\t5:30 PM\tAMC\tTesla, Inc.\t\t\tC\nCG-US\t05/07/2026 C\t8:30 AM\tBMO\tThe Carlyle Group Inc.\t\t\tC\nSCHW-US\t04/16/2026 C\t8:30 AM\tBMO\tThe Charles Schwab Corp.\t\t\tC\nGS-US\t07/14/2026 C\t9:30 AM\tDMH\tThe Goldman Sachs Group, Inc.\t\t\tC\nTTD-US\t05/13/2026 E\t5:00 PM\tAMC\tThe Trade Desk, Inc.\t\t\tE\nDIS-US\t05/06/2026 C\t8:30 AM\tBMO\tThe Walt Disney Co.\t\t\tC\nTMUS-US\t04/28/2026 C\t4:30 PM\tAMC\tT-Mobile US, Inc.\t\t\tC\nUBER-US\t05/06/2026 C\t8:00 AM\tBMO\tUber Technologies, Inc.\t\t\tC\nU-US\t05/07/2026 C\t8:30 AM\tBMO\tUnity Software, Inc.\t\t\tC\nVZ-US\t04/27/2026 C\t8:30 AM\tBMO\tVerizon Communications, Inc.\t\t\tC\nVFC-US\t05/15/2026 E\t8:00 AM\tBMO\tVF Corp.\t\t\tE\nWMT-US\t05/14/2026 E\t8:00 AM\tBMO\tWalmart, Inc.\t\t\tE\nWBD-US\t05/07/2026 E\t8:00 AM\tBMO\tWarner Bros. Discovery, Inc.\t\t\tE\nWDAY-US\t05/21/2026 E\t4:30 PM\tAMC\tWorkday, Inc.\t\t\tE\nXPEV-US\t05/27/2026 E\t8:00 AM\tBMO\tXPeng, Inc.\t\t\tE\nZM-US\t05/25/2026 E\t5:00 PM\tAMC\tZoom Communications, Inc.\t\t\tE\nZS-US\t05/28/2026 E\t4:30 PM\tAMC\tZscaler, Inc.\t\t\tE");
+localStorage.setItem("factset_csv", "Ticker\tDate\tTime\t\tCompany\t\t\tC/E\nHM.B-SE\t06/25/2026 E\t4:00 AM\tBMO\tH&M Hennes & Mauritz AB\t\t\tE\nADS-DE\t04/29/2026 E\t9:00 AM\tBMO\tadidas AG\t\t\tE\nADBE-US\t06/11/2026 E\t5:00 PM\tAMC\tAdobe, Inc.\t\t\tE\nAMD-US\t05/05/2026 C\t5:00 PM\tAMC\tAdvanced Micro Devices, Inc.\t\t\tC\nABNB-US\t05/07/2026 C\t5:00 PM\tAMC\tAirbnb, Inc.\t\t\tC\nBABA-US\t05/14/2026 E\t7:30 AM\tBMO\tAlibaba Group Holding Ltd.\t\t\tE\nGOOG-US\t04/29/2026 C\t4:30 PM\tAMC\tAlphabet, Inc.\t\t\tC\nAMZN-US\t04/29/2026 C\t5:30 PM\tAMC\tAmazon.com, Inc.\t\t\tC\nAPO-US\t05/06/2026 C\t8:30 AM\tBMO\tApollo Global Management, Inc.\t\t\tC\nAAPL-US\t04/30/2026 C\t5:00 PM\tAMC\tApple, Inc.\t\t\tC\nAPP-US\t05/06/2026 C\t5:00 PM\tAMC\tApplovin Corp.\t\t\tC\nARM-US\t05/06/2026 C\t5:00 PM\tAMC\tArm Holdings Plc\t\t\tC\n7936-JP\t05/13/2026 E\t2:00 AM\tBMO\tASICS Corp.\t\t\tE\nASML-US\t07/15/2026 E\t9:00 AM\tBMO\tASML Holding NV\t\t\tE\nT-US\t04/22/2026 C\t8:30 AM\tBMO\tAT&T, Inc.\t\t\tC\nTEAM-US\t04/30/2026 C\t5:00 PM\tAMC\tAtlassian Corp.\t\t\tC\nBIDU-US\t05/19/2026 E\t7:30 AM\tBMO\tBaidu, Inc.\t\t\tE\nBMNR-US\t#N/A\tUnspecified\t#VALUE!\tBitmine Immersion Technologies, Inc.\t\t\tE\nMSTR-US\t05/05/2026 C\t5:00 PM\tAMC\tStrategy, Inc.\t\t\tC\nNET-US\t05/07/2026 C\t5:00 PM\tAMC\tCloudflare, Inc.\t\t\tC\nBX-US\t04/23/2026 C\t9:00 AM\tBMO\tBlackstone, Inc.\t\t\tC\nXYZ-US\t05/07/2026 C\t5:00 PM\tAMC\tBlock, Inc.\t\t\tC\nAVGO-US\t06/04/2026 E\t5:00 PM\tAMC\tBroadcom Inc.\t\t\tE\nBC-IT\t08/27/2026 E\tUnspecified\t#VALUE!\tBrunello Cucinelli SpA\t\t\tE\nCHWY-US\t06/03/2026 E\t8:00 AM\tBMO\tChewy, Inc.\t\t\tE\nCRCL-US\t05/11/2026 C\t8:00 AM\tBMO\tCircle Internet Group, Inc.\t\t\tC\nCOIN-US\t05/07/2026 C\t5:30 PM\tAMC\tCoinbase Global, Inc.\t\t\tC\nCMCSA-US\t04/23/2026 C\t8:30 AM\tBMO\tComcast Corp.\t\t\tC\nCFR-CH\t05/22/2026 C\t3:30 AM\tBMO\tCompagnie Financière Richemont SA\t\t\tC\nCPNG-US\t05/12/2026 E\t5:30 PM\tAMC\tCoupang, Inc.\t\t\tE\nCRWD-US\t05/28/2026 E\t5:00 PM\tAMC\tCrowdStrike Holdings, Inc.\t\t\tE\nDDOG-US\t04/30/2026 E\t8:00 AM\tBMO\tDatadog, Inc.\t\t\tE\nDECK-US\t05/21/2026 E\t4:30 PM\tAMC\tDeckers Outdoor Corp.\t\t\tE\nDKS-US\t05/27/2026 E\t10:00 AM\tDMH\tDick's Sporting Goods, Inc.\t\t\tE\nDASH-US\t05/06/2026 C\t4:30 PM\tAMC\tDoorDash, Inc.\t\t\tC\nETSY-US\t04/29/2026 C\t8:30 AM\tBMO\tEtsy, Inc.\t\t\tC\n9983-JP\t07/09/2026 E\tUnspecified\t#VALUE!\tFast Retailing Co., Ltd.\t\t\tE\nRACE-US\t05/05/2026 C\tUnspecified\t#VALUE!\tFerrari NV\t\t\tC\nFIG-US\t06/18/2026 E\t5:00 PM\tAMC\tFigma, Inc.\t\t\tE\nFOXA-US\t05/12/2026 E\t8:30 AM\tBMO\tFox Corp.\t\t\tE\nGLOO-US\t12/23/2026 E\t5:00 PM\tAMC\tGloo Holdings, Inc.\t\t\tE\nGRAB-US\t05/04/2026 C\t8:00 PM\tAMC\tGrab Holdings Ltd. (Singapore)\t\t\tC\nRMS-FR\t07/29/2026 E\tUnspecified\t#VALUE!\tHermes International SCA\t\t\tE\nHLT-US\t04/28/2026 C\t9:00 AM\tBMO\tHilton Worldwide Holdings, Inc.\t\t\tC\nHUBS-US\t05/06/2026 E\t4:30 PM\tAMC\tHubSpot, Inc.\t\t\tE\nH-US\t04/30/2026 C\t10:00 AM\tDMH\tHyatt Hotels Corp.\t\t\tC\nIBM-US\t04/22/2026 C\t5:00 PM\tAMC\tInternational Business Machines Corp.\t\t\tC\nITX-ES\t06/03/2026 E\t4:00 AM\tBMO\tIndustria de Diseño Textil SA\t\t\tE\nINTC-US\t04/23/2026 C\t5:00 PM\tAMC\tIntel Corp.\t\t\tC\nIQ-US\t05/19/2026 E\t6:30 AM\tBMO\tiQIYI, Inc.\t\t\tE\nJD-US\t05/19/2026 E\t7:00 AM\tBMO\tJD.com, Inc.\t\t\tE\nJPM-US\t07/14/2026 C\t8:30 AM\tBMO\tJPMorgan Chase & Co.\t\t\tC\nKER-FR\t07/29/2026 E\t2:00 AM\tBMO\tKering SA\t\t\tE\nKKR-US\t05/05/2026 C\t10:00 AM\tDMH\tKKR & Co., Inc.\t\t\tC\n1024-HK\t05/25/2026 E\t7:00 AM\tBMO\tKuaishou Technology\t\t\tE\nLI-US\t05/26/2026 E\t8:00 AM\tBMO\tLi Auto, Inc.\t\t\tE\nLCID-US\t05/05/2026 C\t5:30 PM\tAMC\tLucid Group, Inc.\t\t\tC\nLULU-US\t05/28/2026 E\t4:30 PM\tAMC\tlululemon athletica, Inc.\t\t\tE\nMC-FR\t07/28/2026 E\t12:00 PM\tDMH\tLVMH Moët Hennessy Louis Vuitton SE\t\t\tE\nLYFT-US\t05/06/2026 E\t5:00 PM\tAMC\tLyft, Inc.\t\t\tE\nCART-US\t05/06/2026 C\t8:30 AM\tBMO\tMaplebear, Inc.\t\t\tC\nMELI-US\t05/07/2026 E\t5:00 PM\tAMC\tMercadoLibre, Inc.\t\t\tE\nMETA-US\t04/29/2026 C\t5:30 PM\tAMC\tMeta Platforms, Inc.\t\t\tC\nMSFT-US\t04/29/2026 C\t5:30 PM\tAMC\tMicrosoft Corp.\t\t\tC\nMONC-IT\t07/22/2026 E\t12:00 PM\tDMH\tMoncler SpA\t\t\tE\nMS-US\t07/15/2026 C\t8:30 AM\tBMO\tMorgan Stanley\t\t\tC\nNFLX-US\t04/16/2026 E\t4:45 PM\tAMC\tNetflix, Inc.\t\t\tE\nNKE-US\t06/25/2026 E\t5:00 PM\tAMC\tNIKE, Inc.\t\t\tE\nNIO-US\t06/04/2026 E\t8:00 AM\tBMO\tNIO, Inc.\t\t\tE\nNVDA-US\t05/20/2026 E\t5:00 PM\tAMC\tNVIDIA Corp.\t\t\tE\nONON-US\t05/19/2026 E\t8:00 AM\tBMO\tOn Holding AG\t\t\tE\nORCL-US\t06/16/2026 E\t5:00 PM\tAMC\tOracle Corp.\t\t\tE\nORGN-US\t05/12/2026 E\t5:00 PM\tAMC\tOrigin Materials, Inc.\t\t\tE\nPLTR-US\t05/04/2026 C\t5:00 PM\tAMC\tPalantir Technologies, Inc.\t\t\tC\nPANW-US\t05/26/2026 E\t4:30 PM\tAMC\tPalo Alto Networks, Inc.\t\t\tE\nPSKY-US\t05/04/2026 C\t4:45 PM\tAMC\tParamount Skydance Corp.\t\t\tC\nPYPL-US\t05/05/2026 C\t8:00 AM\tBMO\tPayPal Holdings, Inc.\t\t\tC\nPDD-US\t05/27/2026 E\t7:30 AM\tBMO\tPDD Holdings, Inc.\t\t\tE\nPINS-US\t05/04/2026 C\t4:30 PM\tAMC\tPinterest, Inc.\t\t\tC\nPSNY-US\t04/17/2026 C\t8:00 AM\tBMO\tPolestar Automotive Holding UK Plc\t\t\tC\nP911-DE\t04/29/2026 C\t12:00 PM\tDMH\tPorsche AG\t\t\tC\nPCOR-US\t05/05/2026 C\t8:30 AM\tBMO\tProcore Technologies, Inc.\t\t\tC\nRDDT-US\t04/30/2026 C\t4:30 PM\tAMC\tReddit, Inc.\t\t\tC\nRIVN-US\t04/30/2026 C\t5:00 PM\tAMC\tRivian Automotive, Inc.\t\t\tC\nHOOD-US\t04/28/2026 C\t5:00 PM\tAMC\tRobinhood Markets, Inc.\t\t\tC\nRBLX-US\t04/30/2026 C\t4:30 PM\tAMC\tRoblox Corp.\t\t\tC\nROKU-US\t04/30/2026 C\t5:00 PM\tAMC\tRoku, Inc.\t\t\tC\nCRM-US\t06/03/2026 E\t5:00 PM\tAMC\tSalesforce, Inc.\t\t\tE\n005930-KR\t04/29/2026 C\t9:00 PM\tAMC\tSamsung Electronics Co., Ltd.\t\t\tC\nSE-US\t05/19/2026 E\t7:30 AM\tBMO\tSea Ltd. (Singapore)\t\t\tE\nNOW-US\t04/22/2026 C\t5:00 PM\tAMC\tServiceNow, Inc.\t\t\tC\nSHOP-US\t05/05/2026 C\tUnspecified\t#VALUE!\tShopify, Inc.\t\t\tC\nSNAP-US\t04/23/2026 C\t10:00 AM\tDMH\tSnap, Inc.\t\t\tC\nSNOW-US\t05/27/2026 E\t5:00 PM\tAMC\tSnowflake, Inc.\t\t\tE\n9984-JP\t05/13/2026 C\t3:30 AM\tBMO\tSoftBank Group Corp.\t\t\tC\nSPOT-US\t04/28/2026 C\t8:00 AM\tBMO\tSpotify Technology SA\t\t\tC\nSTLA-US\t07/30/2026 C\tUnspecified\t#VALUE!\tStellantis NV\t\t\tC\nTSM-US\t04/16/2026 E\t2:00 AM\tBMO\tTaiwan Semiconductor Manufacturing Co., Ltd.\t\t\tE\nTGT-US\t05/20/2026 E\t8:00 AM\tBMO\tTarget Corp.\t\t\tE\n700-HK\t05/13/2026 E\t8:00 AM\tBMO\tTencent Holdings Ltd.\t\t\tE\nTME-US\t05/12/2026 C\t7:00 AM\tBMO\tTencent Music Entertainment Group\t\t\tC\nTSLA-US\t04/22/2026 C\t5:30 PM\tAMC\tTesla, Inc.\t\t\tC\nCG-US\t05/07/2026 C\t8:30 AM\tBMO\tThe Carlyle Group Inc.\t\t\tC\nSCHW-US\t04/16/2026 E\t8:30 AM\tBMO\tThe Charles Schwab Corp.\t\t\tE\nGS-US\t07/14/2026 C\t9:30 AM\tDMH\tThe Goldman Sachs Group, Inc.\t\t\tC\nTTD-US\t05/13/2026 E\t5:00 PM\tAMC\tThe Trade Desk, Inc.\t\t\tE\nDIS-US\t05/06/2026 C\t8:30 AM\tBMO\tThe Walt Disney Co.\t\t\tC\nTMUS-US\t04/28/2026 C\t4:30 PM\tAMC\tT-Mobile US, Inc.\t\t\tC\nUBER-US\t05/06/2026 C\t8:00 AM\tBMO\tUber Technologies, Inc.\t\t\tC\nU-US\t05/07/2026 C\t8:30 AM\tBMO\tUnity Software, Inc.\t\t\tC\nVZ-US\t04/27/2026 C\t8:30 AM\tBMO\tVerizon Communications, Inc.\t\t\tC\nVFC-US\t05/15/2026 E\t8:00 AM\tBMO\tVF Corp.\t\t\tE\nWMT-US\t05/14/2026 E\t8:00 AM\tBMO\tWalmart, Inc.\t\t\tE\nWBD-US\t05/07/2026 E\t8:00 AM\tBMO\tWarner Bros. Discovery, Inc.\t\t\tE\nWDAY-US\t05/21/2026 E\t4:30 PM\tAMC\tWorkday, Inc.\t\t\tE\nXPEV-US\t05/27/2026 E\t8:00 AM\tBMO\tXPeng, Inc.\t\t\tE\nZM-US\t05/25/2026 E\t5:00 PM\tAMC\tZoom Communications, Inc.\t\t\tE\nZS-US\t05/28/2026 E\t4:30 PM\tAMC\tZscaler, Inc.\t\t\tE");
   const savedCSV = localStorage.getItem("factset_csv");
 if (savedCSV) {
   document.getElementById("csvInput").value = savedCSV;
