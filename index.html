@@ -281,7 +281,7 @@ body{font-family:"IBM Plex Sans",sans-serif;background:var(--bg);color:var(--tex
     <button id="viewListBtn">☰ List</button>
   </div>
   <div class="controls-right">
-    <span id="lastUpdated">Updated 11:02:18 AM</span>
+    <span id="lastUpdated">Restored from last session</span>
     <button class="ctrl-btn" id="settingsBtn" onclick="openSettings()">⚙ Watchlist &amp; Data</button>
   </div>
 </div>
@@ -304,13 +304,13 @@ body{font-family:"IBM Plex Sans",sans-serif;background:var(--bg);color:var(--tex
 </div>
 
 <!-- Tooltip -->
-<div id="tooltip" style="display: none; left: 1028px; top: 251px;">
-  <div class="tt-ticker" id="ttTicker">Chewy, Inc.</div>
-  <div class="tt-name" id="ttName">Chewy, Inc.</div>
-  <div class="tt-row"><span class="tt-label">Date</span><span class="tt-val" id="ttDate">Wed, Jun 3, 2026</span></div>
-  <div class="tt-row"><span class="tt-label">Call time</span><span class="tt-val" id="ttTime">8:00 AM ET<span class="tt-est">(estimated)</span></span></div>
-  <div class="tt-row"><span class="tt-label">Timing</span><span class="tt-val" id="ttTiming">Before market open</span></div>
-  <div class="tt-row"><span class="tt-label">Status</span><span class="tt-val" id="ttStatus">Estimated</span></div>
+<div id="tooltip">
+  <div class="tt-ticker" id="ttTicker"></div>
+  <div class="tt-name" id="ttName"></div>
+  <div class="tt-row"><span class="tt-label">Date</span><span class="tt-val" id="ttDate"></span></div>
+  <div class="tt-row"><span class="tt-label">Call time</span><span class="tt-val" id="ttTime"></span></div>
+  <div class="tt-row"><span class="tt-label">Timing</span><span class="tt-val" id="ttTiming"></span></div>
+  <div class="tt-row"><span class="tt-label">Status</span><span class="tt-val" id="ttStatus"></span></div>
 </div>
 
 <!-- Day panel -->
@@ -345,7 +345,7 @@ body{font-family:"IBM Plex Sans",sans-serif;background:var(--bg);color:var(--tex
         <button class="sp-btn sec" id="clearCSV">Clear data</button>
         <button class="sp-btn sec" id="exportWithData" title="Download HTML file with data embedded — share this with your team">⇩ Share file</button>
       </div>
-      <div class="data-status" id="dataStatus">116 earnings entries loaded.</div>
+      <div class="data-status" id="dataStatus"></div>
     </div>
 
 
